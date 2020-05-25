@@ -17,6 +17,7 @@ public:
   NetlistReader(istream &src);
 
   /*Reads a line of from the associated stream.
+  Should skip comment lines '*'
   Once '.end' is reached returns an empty vector and should not be called again
   */
   vector<string> next();
