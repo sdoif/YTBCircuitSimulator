@@ -1,0 +1,5 @@
+My initial thoughts regarding input implimentation:
+Create an input stream class NetlistReader with the following method:
+- vector<string> next() -- extracts a line of the netlist and stores it in a
+  vector of strings, returns empty vector once netlist reaches .end and should
+  not be called again
