@@ -1,6 +1,6 @@
 My initial thoughts regarding input implimentation:
 Create an input stream class NetlistReader with the following method:
-- vector<string> next() -- extracts a line of the netlist and stores it in a
+- vector<string> get_line() -- extracts a line of the netlist and stores it in a
   vector of strings, skipping any comment lines marked with '*', returns empty
   vector once netlist reaches .end and should not be called again
 

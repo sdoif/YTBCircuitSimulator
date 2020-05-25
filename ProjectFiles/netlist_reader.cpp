@@ -6,7 +6,7 @@ NetlistReader::NetlistReader(istream &_src)
 
 }
 
-vector<string> NetlistReader::next()
+vector<string> NetlistReader::get_line()
 {
   vector<string> line;
   string in;
