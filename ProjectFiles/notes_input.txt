@@ -1,5 +1,17 @@
 My initial thoughts regarding input implimentation:
 Create an input stream class NetlistReader with the following method:
 - vector<string> next() -- extracts a line of the netlist and stores it in a
-  vector of strings, returns empty vector once netlist reaches .end and should
-  not be called again
+  vector of strings, skipping any comment lines marked with '*', returns empty
+  vector once netlist reaches .end and should not be called again
+
+This will allow for easy manipulation of the input to be stored in whatever
+data structre we deem fit later on, where each returned vector will contain all
+of the information necessary split into appropriate vector indexes:
+i.e.  line[0] = designator + identifier
+      line[1] = node0
+      line[2] = node1
+      line[3] = value (for 2 terminal devices), = node2 (for 3 terminal devices)
+      line[4] = value (for 3 terminal devices)
+
+Additional input process will have to be added to manage the specification of
+SINE for voltage and current sources to correctly split into input params
