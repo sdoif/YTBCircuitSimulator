@@ -20,4 +20,6 @@ public:
   Once '.end' is reached returns an empty vector and should not be called again
   */
   vector<string> next();
-}
+};
+
+#endif
