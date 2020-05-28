@@ -1,0 +1,74 @@
+Using the Eigen template library to manipulate and manage matrices.
+Whenever compiling, link the header using the following command:
+g++ -I ~/include/eigen-3.3.7 main.cpp -o program
+
+NOTE: I have copied the eigen folder into /usr/local/include/ which should
+allow normal compile commands
+
+
+*INITIALISATION/CONSTRUCTION*
+REMEMBER: #include <Eigen/Dense>
+          using namespace Eigen;
+MatrixXd = dynamically sized matrix of type double
+VectorXd = dynamically sized vector of type double
+MatrixNt = Matrix<type, N, N> (useful for conductance matrix)
+Types (t) allowed:
+- i (int)
+- f (float)
+- d (double)
+- cf (complex<float>)
+- cd (complex<double>)
+You can stream values into an object using << operator:
+i.e.  VectorXd v(3); //Creates a vector of size 3
+      v << 1, 2, 3; //Fills the cells of the vector
+      MatrixXd m(3,3);
+      m << 1, 2, 3,
+           4, 5, 6,
+           7, 8, 9; //New lines not required, used for clarity
+
+You can cout vectors and matrices directly using << operator
+
+For constructors, the number of rows is always passed first:
+i.e. MatrixXf a(10,15) creates a 10 row by 15 col matrix
+
+*ELEMENT ACCESS*
+To access elements in a matrix, the () operator is overloaded, where the row
+index then column index is passed (counting starts at 0):
+i.e.  MatrixXd m(2,2); //Constructs a 2x2 matrix
+      m(0,0) = 3; //Allocates the value of 3 to the element at r1,c1
+NOTE: Operator [] can also be used to access elements in a vector but not a matrices
+
+
+*RESIZING*
+- rows() returns number of rows
+- cols() returns number of columns
+- size() returns number of coefficients
+- resize(int,int) resizes a dynamically allocated matrix
+NOTE: use conservativeResize() if you do not want value of coefficients
+I'm assuming this is an expensive operation so we want to minimise the amount
+of times it is called, it is porbably worth going through the input and
+determining the amount of nodes first, then creating a dynamic matric of that size
+Using the = operator will automatically resize a matrix to match what it is being
+made equal to.
+NOTE: For sizes smaller than 16, using fixed size matrices is hugely beneficial
+to performance, worth considering using these for smaller numbers of nodes
+This can be done using the extra template parameters:
+Matrix< typename Scalar,
+        int RowsAtCompileTime,
+        int ColsAtCompileTime,
+        int Options = 0, //Dont fuck with this
+        int MaxRowsAtCompileTime = RowsAtCompileTime,
+        int MaxColsAtCompileTime = ColsAtCompileTime>
+By creating Matrix<float, Dynamic, Dynamic, 0, 16, 16> this allows us to use a
+'dynamically sized' matrix for smaller node sizes without actually using dynamic
+memory allocation (might not be necessary provided number or nodes is known)
+
+
+*ARITHMETIC*
+Supported operators (objects must be the same size):
+- binary operator + (a+b)
+- binary operator - (a-b)
+- unary operator - (-a or a*-1)
+- compound operator += (a+=b)
+- compound operator -= (a-=b)
+scalar multiplication and division is also supported (both compound and binary operators)
