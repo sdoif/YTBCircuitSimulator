@@ -15,4 +15,5 @@ int main()
     }
     input.push_back(line);
   }
+  //For calculating number of nodes, stoi can be used on '000x' and will ignore 0s
 }
