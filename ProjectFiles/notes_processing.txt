@@ -4,7 +4,7 @@ g++ -I ~/include/eigen-3.3.7 main.cpp -o program
 
 NOTE: I have copied the eigen folder into /usr/local/include/ which should
 allow normal compile commands
-
+Eigen quickref guide: http://eigen.tuxfamily.org/dox/group__QuickRefPage.html
 
 *INITIALISATION/CONSTRUCTION*
 REMEMBER: #include <Eigen/Dense>
@@ -72,3 +72,60 @@ Supported operators (objects must be the same size):
 - compound operator += (a+=b)
 - compound operator -= (a-=b)
 scalar multiplication and division is also supported (both compound and binary operators)
+
+Matrix manipulation:
+- transpose()
+- conjugate() -- complex matrices only (non-operation on real matrices)
+- adjoint() -- conjugate transpose
+NOTE: a=a.transpose(); does NOT transpose the matrix, DO NOT DO THIS!
+      for in place transposition, use transposeInPlace() or adjointInPlace()
+
+Matrix multiplication:
+Both binary operator * and compound operator *= are supported (take care valid operations)
+Member functions:
+- dot(matrix) gives dot product
+- cross(matrix) gives cross product
+
+Reduction operations:
+- sum() returns sum of elements
+- product() returns product of elements
+- maxCoeff() & minCoeff() return mac and min respectively
+
+
+**LINEAR SOLVING**
+Decompositions:
+- ColPivHouseholderQR() QR decomposition with column pivoting, works on all
+                        matrices while being quite fast
+- PartialPivLU() Requries matrix to be invertible, faster but reduced accuracy
+- LLT() Requires a positive definite matrix, fastest possible method, reduced accuracy
+        NOTE: Our conductance matrix should be a positive (semi?)definite matrix
+
+For 8x8 matrices, ColPivHouseholderQR() is 4.3x slower than LLT
+NOTE: For optimisation, refer back to benchmark and use different methods for
+      different sized matrices to balance accuracy and speeds for various sizes
+Benchmarking of relative speeds: http://eigen.tuxfamily.org/dox/group__DenseDecompositionBenchmark.html
+
+To solve an equation of the form Ax=b: (x and b are vectors)
+VectorXd x = A.decomposition().solve(b);
+
+To test the error margin of your solution:
+double relative_error = (A*x - b).norm() / b.norm();
+NOTE: In report discuss vector norms / matrix norms and what they represent (if space)
+
+Advanced optimisation:
+If time allows it might be worth using eigenvalue decomposition to determine
+whether a matrix is definite / semi-definite to use faster decomposition methods
+i.e.  SelfAdjointEigenSolver<MatrixXd> eigensolver(A);
+      if(eigensolver.info() != Success) abort();
+      cout<<eigensolver.eigenvalues()<<endl;
+If all eigenvalues are positive our matrix is definite, if they are non-negative
+our matrix is semi-definite.
+
+For VERY SMALL matrices (4x4 max) it can be more efficient to call the following
+methods directly to solve Ax = b:
+- inverse() returns the inverse of a matrix
+- determinant() returns the determinant of a matrix
+NOTE: DO NOT USE THESE METHODS FOR LARGER MATRICES, SLOW AS FUCK
+
+Not sure if more methods are required for what we want to do, more info available
+here: http://eigen.tuxfamily.org/dox/group__TutorialLinearAlgebra.html
