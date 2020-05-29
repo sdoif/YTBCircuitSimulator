@@ -32,8 +32,18 @@ vector<string> NetlistReader::get_line()
   while(in.find(' ')!=string::npos){
     int index = in.find(' ');
     string param = in.substr(0, index);
+    if(param.find('(')!=string::npos){
+      index = param.find('(');
+      param = in.substr(0, index);
+    }
     in = in.substr(index+1, in.size()-(index+1));
     line.push_back(param);
   }
+  assert(!in.empty());
+  if(in.find(')')!=string::npos){
+    assert(in.find(')') == (in.size()-1));
+    in.pop_back();
+  }
+  line.push_back(in);
   return line;
 }
