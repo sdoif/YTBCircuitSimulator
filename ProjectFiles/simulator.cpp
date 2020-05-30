@@ -56,6 +56,24 @@ int main()
   VectorXd v(nodes);
   VectorXd i(nodes);
 
-  //TO-DO: Update the values of the conductance matrix / current / voltage vectors for each component
+  /*TO-DO: Update the values of the conductance matrix / current / voltage vectors for each component
+  Potential to move to another hpp file netlist_process? */
+  for(int l=0; l<input.size(); l++){
+    vector<string> line = input[l];
+    if(line[0].find('R')==0){
 
+    }
+    if(line[0].find('C')==0){
+
+    }
+    if(line[0].find('L')==0){
+
+    }
+    if(line[0].find('V')==0){
+
+    }
+    if(line[0].find('I')==0){
+
+    }
+  }
 }
