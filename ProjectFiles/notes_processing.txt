@@ -1,6 +1,6 @@
 Using the Eigen template library to manipulate and manage matrices.
 Whenever compiling, link the header using the following command:
-g++ -I ~/include/eigen-3.3.7 main.cpp -o program
+g++ -I /usr/local/include/eigen-3.3.7 main.cpp -o program
 
 NOTE: I have copied the eigen folder into /usr/local/include/ which should
 allow normal compile commands
