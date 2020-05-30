@@ -8,7 +8,7 @@ int main()
   //Netlist management
   vector<vector<string>> input;
   vector<string> tran;
-  string node_max;
+  int node_max;
   NetlistReader reader(cin);
   while(1)
   {
@@ -20,11 +20,20 @@ int main()
       tran = line;
     }
     else{
-      if(line[1]>node_max){
-        node_max = line[1];
+      int node;
+      if(line[1].find('N')!=string::npos){
+        line[1].erase('N');
       }
-      if(line[2]>node_max){
-        node_max = line[2];
+      node=stoi(line[1]);
+      if(node>node_max){
+        node_max = node;
+      }
+      if(line[2].find('N')!=string::npos){
+        line[2].erase('N');
+      }
+      node=stoi(line[2]);
+      if(node>node_max){
+        node_max = node;
       }
       input.push_back(line);
     }
@@ -35,11 +44,7 @@ int main()
   }
 
   //Creating appropriate matrices / vectors
-  int nodes;
-  if(node_max.find('N')!=string::npos){
-    node_max.erase('N');
-  }
-  nodes = stoi(node_max)+1;
+  int nodes = node_max+1;
   Matrix<double, Dynamic, Dynamic, 0, 16, 16> con_s;
   if(nodes<17){
     con_s.resize(nodes, nodes);
