@@ -1,5 +1,7 @@
 #include "netlist_reader.hpp"
-#include "matrix_processor.hpp"
+#include <Eigen/Dense>
+
+using namespace Eigen;
 
 int main()
 {

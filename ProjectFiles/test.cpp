@@ -11,11 +11,13 @@ int main()
   cin>>in;
   int x = stoi(in);
   cout<<x<<endl;
+  bool small = x<17;
+  small ? Matrix<double, Dynamic, Dynamic, 0, 16, 16> con; : MatrixXd con;
+  Matrix<double, Dynamic, Dynamic, 0, 16, 16> con_s;
   MatrixXd con_l;
-  cout<<"test: "<<con_l<<endl;
-  if(x<17){
-    con_l.resize(x,x);
-  }
-  con_l << 1,2,3,4,5,6,7,8,9;
-  cout<<con_l<<endl;
+
+  con_s.resize(3,3);
+  con_s << 1,2,3, 4,5,6, 7,8,9;
+  cout<<"success"<<endl;
+
 }

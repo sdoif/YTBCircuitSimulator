@@ -129,3 +129,18 @@ NOTE: DO NOT USE THESE METHODS FOR LARGER MATRICES, SLOW AS FUCK
 
 Not sure if more methods are required for what we want to do, more info available
 here: http://eigen.tuxfamily.org/dox/group__TutorialLinearAlgebra.html
+
+Initially we thought to create a seperate .hpp and .cpp file for matrix processing,
+and call the function within our simulator as to help compartmentalise the overall
+project and give us a cleaner simulator.cpp file. However, we realised this was
+not possible as we were researching how to template eigen types as parameters.
+The expression of type matrix will be implicitly evaluated into a temporary matrix,
+meaning that the function will be unable to write to the expression, even when
+passing by reference. (https://eigen.tuxfamily.org/dox/TopicFunctionTakingEigenTypes.html)
+
+Since now we no longer have the option to pass the appropriate version of the matrix
+(the 'dynamic' 16x16 or the purely dynamic matrices) to our processing function,
+we had to look into alternative methods to do the processing, preferably without
+just copying and pasting the processing into 2 seperate if loops for each matrix.
+
+We considered was using the ternary operator to initialise our matrix.
