@@ -92,7 +92,7 @@ Reduction operations:
 - maxCoeff() & minCoeff() return mac and min respectively
 
 
-**LINEAR SOLVING**
+*LINEAR SOLVING*
 Decompositions:
 - ColPivHouseholderQR() QR decomposition with column pivoting, works on all
                         matrices while being quite fast
