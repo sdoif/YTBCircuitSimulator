@@ -143,4 +143,10 @@ Since now we no longer have the option to pass the appropriate version of the ma
 we had to look into alternative methods to do the processing, preferably without
 just copying and pasting the processing into 2 seperate if loops for each matrix.
 
-We considered was using the ternary operator to initialise our matrix.
+We considered was using the ternary operator to initialise our matrix. However,
+after significant testing, we were unable to find a way to use it to conditionally
+initialise our 2 matrices.
+
+For now, the quick and dirty workaround involves copying and pasting the logic of
+the processor in 2 seperate if statements, one for the small and one for the large
+matrices.
