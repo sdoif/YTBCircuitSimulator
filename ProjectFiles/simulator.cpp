@@ -44,17 +44,17 @@ int main()
   }
 
   //Creating appropriate matrices / vectors
-  int nodes = node_max+1;
+//  int nodes = node_max+1;
   Matrix<double, Dynamic, Dynamic, 0, 16, 16> con_s;
-  if(nodes<17){
-    con_s.resize(nodes, nodes);
+  if(node_max<17){
+    con_s.resize(node_max, node_max);
   }
   MatrixXd con_l;
-  if(nodes>16){
-    con_l.resize(nodes,nodes);
+  if(node_max>16){
+    con_l.resize(node_max,node_max);
   }
-  VectorXd v(nodes);
-  VectorXd i(nodes);
+  VectorXd v(node_max);
+  VectorXd i(node_max);
 
   /*TO-DO: Update the values of the conductance matrix / current / voltage vectors for each component
   Potential to move to another hpp file netlist_process? */
