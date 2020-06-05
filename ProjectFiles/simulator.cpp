@@ -60,7 +60,20 @@ int main()
   Potential to move to another hpp file netlist_process? */
   for(int l=0; l<input.size(); l++){
     vector<string> line = input[l];
+//The 0th index of the line vector contains the designator and hence looking at the 0th char of the string
+//will tell us what component it is
     if(line[0].find('R')==0){
+      double r_con = 1/(line[3]);
+      //Adding to total conductances indicies
+        if(line[1]!==0){
+          con_s(line[1]-1, line[1]-1) += r_con;
+        }
+        if(line[2]!==0){
+          con_s(line[2]-1, line[2]-1) += r_con;
+        }
+      //Allocate respectie index in matrix
+      con_s(line[1], line[2]) = r_cons;
+      con_s(line[2], line[1]) = -r_cons;
 
     }
     if(line[0].find('C')==0){
