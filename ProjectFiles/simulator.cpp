@@ -1,5 +1,6 @@
 #include "netlist_reader.hpp"
 #include <Eigen/Dense>
+#include <cmath>
 
 using namespace Eigen;
 
@@ -63,26 +64,93 @@ int main()
 //The 0th index of the line vector contains the designator and hence looking at the 0th char of the string
 //will tell us what component it is
     if(line[0].find('R')==0){
-      double r_con = 1/(line[3]);
+      double r_con = 1/(stoi(line[3]));
       //Adding to total conductances indicies
-        if(line[1]!==0){
-          con_s(line[1]-1, line[1]-1) += r_con;
+        if(stoi(line[1])!=0){
+          con_s(stoi(line[1])-1, stoi(line[1])-1) += r_con;
         }
-        if(line[2]!==0){
-          con_s(line[2]-1, line[2]-1) += r_con;
+        if(stoi(line[2])!=0){
+          con_s(stoi(line[2])-1, stoi(line[2])-1) += r_con;
         }
-      //Allocate respectie index in matrix
-      con_s(line[1], line[2]) = r_cons;
-      con_s(line[2], line[1]) = -r_cons;
+      //Allocate respective index in matrix
+      con_s(stoi(line[1]), stoi(line[2])) = r_con;
+      con_s(stoi(line[2]), stoi(line[1])) = -r_con;
 
     }
     if(line[0].find('C')==0){
+      //Check if connected to reference node
+      if(stoi(line[1]) || stoi(line[2]) == 0){
+        //Inserting 1/-1 into respective node
+        if(stoi(line[1]) != 0){
+          con_s(stoi(line[1]), stoi(line[1])) = 1;
+        }
+        if(stoi(line[2]) != 0){
+          con_s(stoi(line[2]), stoi(line[2])) = -1;
+        }
+
+      }
+      //all other cases when it is connected to 2 non-reference nodes
+      else{
+        //check for second time voltage source appears
+        if(stoi(line[1]) > stoi(line[2])){
+          //copying values from first row into second row and overwrite first row
+          for(int i=1; i<con_s.cols(); i++){
+            con_s(stoi(line[1]), i) = con_s(stoi(line[2]), i);
+            con_s(stoi(line[2]), i) = 0;
+
+          }
+          //making of supernode means 0 conductance between nodes
+          con_s(stoi(line[1]), stoi(line[2])) = 0;
+          //add in 1 and -1 to first row to represent voltage source
+          con_s(stoi(line[2]), stoi(line[2])) = -1;
+          con_s(stoi(line[2]), stoi(line[1])) = 1;
+
+        }
+
+      }
+
 
     }
     if(line[0].find('L')==0){
 
     }
     if(line[0].find('V')==0){
+      //Check if connected to reference node
+      if(stoi(line[1]) || stoi(line[2]) == 0){
+        //Inserting 1/-1 into respective node
+        if(stoi(line[1]) != 0){
+          con_s(stoi(line[1]), stoi(line[1])) = 1;
+          //Insert value of source into voltage vector
+          v(stoi(line[1])) = stoi(line[3]);
+        }
+        if(stoi(line[2]) != 0){
+          con_s(stoi(line[2]), stoi(line[2])) = -1;
+          //Insert value of source into voltage vector
+          v(stoi(line[2])) = -stoi(line[3]);
+        }
+
+      }
+      //all other cases when it is connected to 2 non-reference nodes
+      else{
+        //check for second time voltage source appears
+        if(stoi(line[1]) > stoi(line[2])){
+          //copying values from first row into second row and overwrite first row
+          for(int i=1; i<con_s.cols(); i++){
+            con_s(stoi(line[1]), i) = con_s(stoi(line[2]), i);
+            con_s(stoi(line[2]), i) = 0;
+
+          }
+          //making of supernode means 0 conductance between nodes
+          con_s(stoi(line[1]), stoi(line[2])) = 0;
+          //add in 1 and -1 to first row to represent voltage source
+          con_s(stoi(line[2]), stoi(line[2])) = -1;
+          con_s(stoi(line[2]), stoi(line[1])) = 1;
+          //place value of sourve into voltage vector, but negative as in first row nodes are flipped
+          v(stoi(line[2])) = -stoi(line[3]);
+
+        }
+
+      }
 
     }
     if(line[0].find('I')==0){
