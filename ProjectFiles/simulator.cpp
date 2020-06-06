@@ -1,7 +1,11 @@
 #include "netlist_reader.hpp"
 #include <Eigen/Dense>
+#include <algorithm>
 
 using namespace Eigen;
+
+bool netlist_sort(vector<string> &a, vector<string> &b);
+bool component(char a, char b);
 
 int main()
 {
@@ -36,12 +40,16 @@ int main()
         node_max = node;
       }
       input.push_back(line);
+      swap(line[1],line[2]);
+      input.push_back(line);
     }
   }
   if(tran.empty()){
     cerr<<"No simulation settings specified"<<endl;
     return 1;
   }
+
+  sort(input.begin(), input.end(), netlist_sort);
 
   //Creating appropriate matrices / vectors
 //  int nodes = node_max+1;
@@ -89,4 +97,37 @@ int main()
 
     }
   }
+}
+
+bool component(char a, char b)
+{
+  if(a=='V' && b!='V'){
+    return true;
+  }
+  if(a=='C' && b!='V' && b!='C'){
+    return true;
+  }
+  if(a=='I' && b!='V' && b!='C' && b!='I'){
+    return true;
+  }
+  if(a=='L' && b=='R'){
+    return true;
+  }
+  return false;
+}
+
+bool netlist_sort(vector<string> &a, vector<string> &b)
+{
+  if(a[1]<b[1]){
+    return true;
+  }
+  if(a[1]==b[1]){
+    if(component(a[0][0], b[0][0])){
+      return true
+    }
+    if(a[0][0] == b[0][0]){
+      return a[2]<b[2];
+    }
+  }
+  return false;
 }
