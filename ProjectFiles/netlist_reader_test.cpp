@@ -37,6 +37,23 @@ int main()
       }
       input.push_back(line);
       swap(line[1], line[2]);
+      if(line[0].rfind('V',0)==0 || line[0].rfind('I',0)==0){
+        if(line.size()==4){
+          if(line[4].rfind('-',0)==0){
+            line[4].erase(0,1);
+          }else{
+            line[4]="-"+line[4];
+          }
+        }
+        if(line.size()==7){
+          if(line[5].rfind('-',0)==0){
+            line[5].erase(0,1);
+          }else{
+            line[5]="-"+line[5];
+          }
+          line.push_back("1");
+        }
+      }
       input.push_back(line);
     }
   }
