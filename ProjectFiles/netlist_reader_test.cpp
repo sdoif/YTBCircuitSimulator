@@ -6,7 +6,6 @@ int main()
   vector<string> tran;
   int node_max;
   NetlistReader reader(cin);
-  cout<<1<<endl;
   while(1)
   {
     vector<string> line = reader.get_line();
@@ -18,15 +17,15 @@ int main()
     }
     else{
       int node;
-      if(line[1].find('N')!=string::npos){
-        line[1].erase('N');
+      if(line[1].rfind('N',0)==0){
+        line[1].erase(0,1);
       }
       node=stoi(line[1]);
       if(node>node_max){
         node_max = node;
       }
-      if(line[2].find('N')!=string::npos){
-        line[2].erase('N');
+      if(line[2].rfind('N',0)==0){
+        line[2].erase(0,1);
       }
       node=stoi(line[2]);
       if(node>node_max){
@@ -40,7 +39,6 @@ int main()
     return 1;
   }
 
-cout<<"you made it"<<endl;
   for(int i=0; i<input.size(); i++)
   {
     vector<string> line = input[i];
