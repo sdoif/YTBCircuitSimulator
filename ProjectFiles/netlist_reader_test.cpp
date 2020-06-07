@@ -41,10 +41,10 @@ int main()
       swap(line[1], line[2]);
       if(line[0].rfind('V',0)==0 || line[0].rfind('I',0)==0){
         if(line.size()==4){
-          if(line[4].rfind('-',0)==0){
-            line[4].erase(0,1);
+          if(line[3].rfind('-',0)==0){
+            line[3].erase(0,1);
           }else{
-            line[4]="-"+line[4];
+            line[3]="-"+line[3];
           }
         }
         if(line.size()==7){
