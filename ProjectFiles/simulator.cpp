@@ -73,15 +73,15 @@ int main()
           con_s(stoi(line[2])-1, stoi(line[2])-1) += r_con;
         }
       //Allocate respective index in matrix
-      con_s(stoi(line[1]), stoi(line[2])) = r_con;
-      con_s(stoi(line[2]), stoi(line[1])) = -r_con;
+      con_s(stoi(line[1])-1, stoi(line[2])-1) = r_con;
+      con_s(stoi(line[2])-1, stoi(line[1])-1) = -r_con;
 
     }
     if(line[0].find('C')==0){
       //Check if connected to reference node
-      if(stoi(line[2])) == 0){
+      if(stoi(line[2]) == 0){
         //Inserting 1 into respective node
-          con_s(stoi(line[1]), stoi(line[1])) = 1;
+          con_s(stoi(line[1])-1, stoi(line[1])-1) = 1;
 
       }
       //All other cases when it is connected to 2 non-reference nodes
@@ -89,18 +89,18 @@ int main()
         //Check for second time voltage source appears
         if(stoi(line[1]) > stoi(line[2])){
           //Copying values from first row into second row and overwrite first row
-          for(int x=1; x<con_s.cols(); x++){
-            con_s(stoi(line[1]), x) = con_s(stoi(line[2]), x);
-            con_s(stoi(line[2]), x) = 0;
+          for(int x=0; x<con_s.cols(); x++){
+            con_s(stoi(line[1])-1, x) = con_s(stoi(line[2])-1, x);
+            con_s(stoi(line[2])-1, x) = 0;
 
           }
           //Move current vector value from first row into second row as well
-          i(stoi(line[1])) = i(stoi(line[2]));
+          i(stoi(line[1])-1) = i(stoi(line[2])-1);
           //Making of supernode means 0 conductance between nodes
-          con_s(stoi(line[1]), stoi(line[2])) = 0;
+          con_s(stoi(line[1])-1, stoi(line[2])-1) = 0;
           //Add in 1 and -1 to first row to represent voltage source
-          con_s(stoi(line[2]), stoi(line[2])) = 1;
-          con_s(stoi(line[2]), stoi(line[1])) = -1;
+          con_s(stoi(line[2])-1, stoi(line[2])-1) = 1;
+          con_s(stoi(line[2])-1, stoi(line[1])-1) = -1;
 
         }
 
@@ -113,11 +113,11 @@ int main()
     }
     if(line[0].find('V')==0){
       //Check if connected to reference node
-      if(stoi(line[2])) == 0){
+      if(stoi(line[2]) == 0){
         //Inserting 1 into respective node
-          con_s(stoi(line[1]), stoi(line[1])) = 1;
+          con_s(stoi(line[1])-1, stoi(line[1])-1) = 1;
           //Insert value of source into voltage vector
-          i(stoi(line[1])) = ctof(line[3]);
+          i(stoi(line[1])-1) = ctof(line[3]);
 
       }
       //All other cases when it is connected to 2 non-reference nodes
@@ -125,20 +125,20 @@ int main()
         //Check for second time voltage source appears
         if(stoi(line[1]) > stoi(line[2])){
           //Copying values from first row into second row and overwrite first row
-          for(int x=1; x<con_s.cols(); x++){
-            con_s(stoi(line[1]), x) = con_s(stoi(line[2]), x);
-            con_s(stoi(line[2]), x) = 0;
+          for(int x=0; x<con_s.cols(); x++){
+            con_s(stoi(line[1])-1, x) = con_s(stoi(line[2])-1, x);
+            con_s(stoi(line[2])-1, x) = 0;
 
           }
           //Move current vector value from first row into second row as well
-          i(stoi(line[1])) = i(stoi(line[2]));
+          i(stoi(line[1])-1) = i(stoi(line[2])-1);
           //Making of supernode means 0 conductance between nodes
-          con_s(stoi(line[1]), stoi(line[2])) = 0;
+          con_s(stoi(line[1])-1, stoi(line[2])-1) = 0;
           //Add in 1 and -1 to first row to represent voltage source
-          con_s(stoi(line[2]), stoi(line[2])) = 1;
-          con_s(stoi(line[2]), stoi(line[1])) = -1;
+          con_s(stoi(line[2])-1, stoi(line[2])-1) = 1;
+          con_s(stoi(line[2])-1, stoi(line[1])-1) = -1;
           //Place value of sourve into voltage vector, but negative as in first row nodes are flipped
-          i(stoi(line[2])) = ctof(line[3])*-1;
+          i(stoi(line[2])-1) = ctof(line[3])*-1;
 
         }
 
