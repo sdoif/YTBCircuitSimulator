@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-g++ -g netlist_reader_test.cpp netlist_reader.cpp -o netlist_reader_test
+g++ netlist_reader_test.cpp netlist_reader.cpp -o netlist_reader_test
 
 echo "Compiled"
 
