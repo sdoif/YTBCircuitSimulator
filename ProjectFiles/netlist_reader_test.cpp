@@ -35,7 +35,9 @@ int main()
       if(node>node_max){
         node_max = node;
       }
-      input.push_back(line);
+      if(line[1]!="0"){
+        input.push_back(line);
+      }
       swap(line[1], line[2]);
       if(line[0].rfind('V',0)==0 || line[0].rfind('I',0)==0){
         if(line.size()==4){
@@ -54,7 +56,9 @@ int main()
           line.push_back("1");
         }
       }
-      input.push_back(line);
+      if(line[1]!="0"){
+        input.push_back(line);
+      }
     }
   }
   sort(input.begin(), input.end(), netlist_sort);
