@@ -17,6 +17,12 @@ int main()
       break;
     }
     if(line[0]==".tran"){
+      if(line[2].find('s')!=string::npos){
+        line[2].erase(line[2].find('s'),1);
+      }
+      if(line[4].find('s')!=string::npos){
+        line[4].erase(line[4].find('s'),1);
+      }
       tran = line;
     }
     else{
