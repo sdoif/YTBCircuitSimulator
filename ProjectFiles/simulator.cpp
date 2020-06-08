@@ -3,6 +3,8 @@
 
 using namespace Eigen;
 
+double ctod(string v);
+
 int main()
 {
   //Netlist management
@@ -45,16 +47,30 @@ int main()
 
   //Creating appropriate matrices / vectors
 //  int nodes = node_max+1;
-  Matrix<double, Dynamic, Dynamic, 0, 16, 16> con_s;
-  if(node_max<17){
-    con_s.resize(node_max, node_max);
-  }
-  MatrixXd con_l;
-  if(node_max>16){
-    con_l.resize(node_max,node_max);
-  }
-  VectorXd v(node_max);
-  VectorXd i(node_max);
+Matrix<double, Dynamic, Dynamic, 0, 16, 16> con_s;
+if(node_max<17){
+ con_s.resize(node_max, node_max);
+}
+Matrix<double, Dynamic, Dynamic, 0, 16, 1> i_s;
+if(node_max<17){
+ i_s.resize(node_max, 1);
+}
+Matrix<double, Dynamic, Dynamic, 0, 16, 1> v_s;
+if(node_max<17){
+ v_s.resize(node_max, 1);
+}
+MatrixXd con_l;
+if(node_max>16){
+ con_l.resize(node_max,node_max);
+}
+VectorXd v_l;
+if(node_max>16){
+ v_l.resize(node_max,1);
+}
+VectorXd i_l;
+if(node_max>16){
+ i_l.resize(node_max,1);
+}
 
   /*TO-DO: Update the values of the conductance matrix / current / voltage vectors for each component
   Potential to move to another hpp file netlist_process? */
@@ -74,7 +90,7 @@ if(line[0].find('R')==0){
       }*/
     //Allocate respective index in matrix
     con_s(stoi(line[1])-1, stoi(line[2])-1) -= r_con;
-//since we changed the input processing this wont be needed 
+//since we changed the input processing this wont be needed
     //con_s(stoi(line[2])-1, stoi(line[1])-1) = -r_con;
 
   }
@@ -88,7 +104,11 @@ if(line[0].find('R')==0){
 
     }
     if(line[0].find('I')==0){
-
+      int node = stoi(line[1]);
+      //If a current source is found, the value of its current will be added to respective node
+      if(node!=0){
+        i_s((node-1), 0) += stoi(line[3]);
+      }
     }
   }
 }
