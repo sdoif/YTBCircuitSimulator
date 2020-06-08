@@ -95,7 +95,7 @@ int main()
 
           }
           //Move current vector value from first row into second row as well
-          i(stoi(line[1])-1) = i(stoi(line[2])-1);
+          i_s(stoi(line[1])-1) = i_s(stoi(line[2])-1);
           //Making of supernode means 0 conductance between nodes
           con_s(stoi(line[1])-1, stoi(line[2])-1) = 0;
           //Add in 1 and -1 to first row to represent voltage source
@@ -117,7 +117,7 @@ int main()
         //Inserting 1 into respective node
           con_s(stoi(line[1])-1, stoi(line[1])-1) = 1;
           //Insert value of source into voltage vector
-          i(stoi(line[1])-1) = ctof(line[3]);
+          i_s(stoi(line[1])-1) = ctod(line[3]);
 
       }
       //All other cases when it is connected to 2 non-reference nodes
@@ -131,14 +131,14 @@ int main()
 
           }
           //Move current vector value from first row into second row as well
-          i(stoi(line[1])-1) = i(stoi(line[2])-1);
+          i_s(stoi(line[1])-1) = i_s(stoi(line[2])-1);
           //Making of supernode means 0 conductance between nodes
           con_s(stoi(line[1])-1, stoi(line[2])-1) = 0;
           //Add in 1 and -1 to first row to represent voltage source
           con_s(stoi(line[2])-1, stoi(line[2])-1) = 1;
           con_s(stoi(line[2])-1, stoi(line[1])-1) = -1;
           //Place value of sourve into voltage vector, but negative as in first row nodes are flipped
-          i(stoi(line[2])-1) = ctof(line[3])*-1;
+          i_s(stoi(line[2])-1) = ctod(line[3])*-1;
 
         }
 
