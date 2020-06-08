@@ -79,7 +79,7 @@ if(node_max>16){
 //The 0th index of the line vector contains the designator and hence looking at the 0th char of the string
 //will tell us what component it is
 if(line[0].find('R')==0){
-    double r_con = 1/(stoi(line[3]));
+    double r_con = 1/(ctod(line[3]));
     //Adding to total conductances indicies
       if(stoi(line[1])!=0){
         con_s(stoi(line[1])-1, stoi(line[1])-1) += r_con;
@@ -107,7 +107,7 @@ if(line[0].find('R')==0){
       int node = stoi(line[1]);
       //If a current source is found, the value of its current will be added to respective node
       if(node!=0){
-        i_s((node-1), 0) += stoi(line[3]);
+        i_s((node-1), 0) += ctod(line[3]);
       }
     }
   }
