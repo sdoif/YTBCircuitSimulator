@@ -72,25 +72,38 @@ int main()
       }
     }
   }
-  if(tran.empty()){
-    cerr<<"No simulation settings specified"<<endl;
+  if(tran.size()!=5){
+    cerr<<"Simulation settings incorrectly specified"<<endl;
     return 1;
   }
 
   sort(input.begin(), input.end(), netlist_sort);
 
   //Creating appropriate matrices / vectors
-//  int nodes = node_max+1;
   Matrix<double, Dynamic, Dynamic, 0, 16, 16> con_s;
   if(node_max<17){
     con_s.resize(node_max, node_max);
+  }
+  Matrix<double, Dynamic, Dynamic, 0, 16, 1> i_s;
+  if(node_max<17){
+    i_s.resize(node_max, 1);
+  }
+  Matrix<double, Dynamic, Dynamic, 0, 16, 1> v_s;
+  if(node_max<17){
+    v_s.resize(node_max, 1);
   }
   MatrixXd con_l;
   if(node_max>16){
     con_l.resize(node_max,node_max);
   }
-  VectorXd v(node_max);
-  VectorXd i(node_max);
+  VectorXd v_l;
+  if(node_max>16){
+    v_l.resize(node_max,1);
+  }
+  VectorXd i_l;
+  if(node_max>16){
+    i_l.resize(node_max,1);
+  }
 
   /*TO-DO: Update the values of the conductance matrix / current / voltage vectors for each component
   Potential to move to another hpp file netlist_process? */
@@ -125,6 +138,19 @@ int main()
 
     }
   }
+
+  //Transient analysis
+  double stopTime = ctod(tran[2]);
+  double timeStep = ctod(tran[4]);
+  for(double t=0; t<=stopTime; t+=timeStep){
+    if(node_max<17){
+      v_s = con_s.ColPivHouseholderQR().solve(i_s);
+    }
+    if(node_max>16){
+      v_l = con_l.PartialPivLU().solve(i_l);
+    }
+  }
+
 }
 
 bool component(char a, char b)
