@@ -198,7 +198,7 @@ int main()
           //Add in 1 and -1 to first row to represent voltage source
           con_s(stoi(line[2])-1, stoi(line[2])-1) = 1;
           con_s(stoi(line[2])-1, stoi(line[1])-1) = -1;
-          //Place value of source into voltage vector, but negative as in first row nodes are flipped
+          //Place value of source into current vector
           //Check for if DC source
           if(line.size() < 5){
             i_s(stoi(line[2])-1) = ctod(line[3]);
@@ -229,6 +229,50 @@ int main()
   for(double t=0; t<=stopTime; t+=timeStep){
     if(node_max<17){
       v_s = con_s.ColPivHouseholderQR().solve(i_s);
+      //Cycle  through elements to find ones that need to be updated every cycle
+      for(int y=0; y=input.size(); y++){
+        vector<string> line = input[y];
+
+        if(line[0].find('C')==0){
+          //Check for reference node
+          if(stoi(line[2])==0){
+            //Find difference in voltage nodes (in this case value of one node) and multiply by capacitance to get charges
+            double cc = 0;
+            cc = (v_s(stoi(line[1])-1)*ctod(line[3]);
+            charges[line[0]] += cc;
+            //Divide total charge by capacitance to update current vector value
+            i_s(stoi(line[1])-1) = charges[line[0]]/timeStep;
+
+          }
+          else{
+          //Only do this calculation once so we treat it like voltage source
+            if(stoi(line[1])>stoi(line[2])){
+              //Find difference in voltage nodes and multiply by capacitance to get charges
+              double cc = 0;
+              cc = (v_s(stoi(line[2])-1) - v_s(stoi(line[1])-1))*ctod(line[3]);
+              charges[line[0]] += cc;
+              //Divide total charge by capacitance to update current vector value
+              i_s(stoi(line[2])-1) = charges[line[0]]/timeStep;
+
+              }
+            }
+        }
+
+        if(line[0].find('V')==0 && line.size()>4){
+          //Check for reference node
+          if(stoi(line[2])==0){
+              i_s(stoi(line[1])-1) = ctod(line[4])+(ctod(line[5])*sin(2*M_PI*t*ctod(line[6])));
+          }
+          else{
+            //Only do this calculation once for second time voltage source appears
+              if(stoi(line[1])>stoi(line[2])){
+                  i_s(stoi(line[2])-1) = ctod(line[4])+(ctod(line[5])*sin(2*M_PI*t*ctod(line[6])));
+
+          }
+
+        }
+
+      }
     }
     if(node_max>16){
       v_l = con_l.PartialPivLU().solve(i_l);
