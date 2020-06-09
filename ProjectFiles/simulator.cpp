@@ -9,10 +9,10 @@ using namespace Eigen;
 bool netlist_sort(vector<string> &a, vector<string> &b);
 bool component(char a, char b);
 double ctod(string v);
-map<string, double> charges;
 
 int main()
 {
+  map<string, double> charges;
   //Netlist management
   vector<vector<string>> input;
   vector<string> tran;
@@ -227,6 +227,9 @@ int main()
     }
   }
 
+  //Remove duplicate lines, keeping smallest node first (except ref node)
+  input.erase(remove_if(input.begin(), input.end(), [](vector<string> a){return (a[1]>a[2] && a[2]!="0");}), input.end());
+
   //Transient analysis
   double stopTime = ctod(tran[2]);
   double timeStep = ctod(tran[4]);
@@ -296,7 +299,7 @@ bool netlist_sort(vector<string> &a, vector<string> &b)
   }
   if(a[1]==b[1]){
     if(component(a[0][0], b[0][0])){
-      return true
+      return true;
     }
     if(a[0][0] == b[0][0]){
       return a[2]<b[2];
