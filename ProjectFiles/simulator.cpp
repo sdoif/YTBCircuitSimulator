@@ -67,7 +67,11 @@ int main()
           }else{
             line[5]="-"+line[5];
           }
-          line.push_back("1");
+          if(line[6].rfind('-',0)==0){
+            line[6].erase(0,1);
+          }else{
+            line[6]="-"+line[6];
+          }
         }
       }
       if(line[1]!="0"){
