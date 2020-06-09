@@ -1,6 +1,7 @@
 #include "netlist_reader.hpp"
 #include <Eigen/Dense>
 #include <algorithm>
+#include <cmath>
 
 using namespace Eigen;
 
