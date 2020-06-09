@@ -1,6 +1,7 @@
 #include "netlist_reader.hpp"
 #include <Eigen/Dense>
 #include <algorithm>
+#include <cmath>
 
 using namespace Eigen;
 
@@ -126,12 +127,82 @@ int main()
 
     }
     if(line[0].find('C')==0){
+      //Check if connected to reference node
+      if(stoi(line[2]) == 0){
+        //Inserting 1 into respective node
+          con_s(stoi(line[1])-1, stoi(line[1])-1) = 1;
+
+      }
+      //All other cases when it is connected to 2 non-reference nodes
+      else{
+        //Check for second time voltage source appears
+        if(stoi(line[1]) > stoi(line[2])){
+          //Copying values from first row into second row and overwrite first row
+          for(int x=0; x<con_s.cols(); x++){
+            con_s(stoi(line[1])-1, x) = con_s(stoi(line[2])-1, x);
+            con_s(stoi(line[2])-1, x) = 0;
+
+          }
+          //Move current vector value from first row into second row as well
+          i_s(stoi(line[1])-1) = i_s(stoi(line[2])-1);
+          //Making of supernode means 0 conductance between nodes
+          con_s(stoi(line[1])-1, stoi(line[2])-1) = 0;
+          //Add in 1 and -1 to first row to represent voltage source
+          con_s(stoi(line[2])-1, stoi(line[2])-1) = 1;
+          con_s(stoi(line[2])-1, stoi(line[1])-1) = -1;
+
+        }
+
+      }
 
     }
+
     if(line[0].find('L')==0){
 
     }
     if(line[0].find('V')==0){
+      //Check if connected to reference node
+      if(stoi(line[2]) == 0){
+        //Inserting 1 into respective node
+          con_s(stoi(line[1])-1, stoi(line[1])-1) = 1;
+          //Insert value of source into voltage vector
+          i_s(stoi(line[1])-1) = ctod(line[3]);
+
+      }
+      //All other cases when it is connected to 2 non-reference nodes
+      else{
+        //Check for second time voltage source appears
+        if(stoi(line[1]) > stoi(line[2])){
+          //Copying values from first row into second row and overwrite first row
+          for(int x=0; x<con_s.cols(); x++){
+            con_s(stoi(line[1])-1, x) = con_s(stoi(line[2])-1, x);
+            con_s(stoi(line[2])-1, x) = 0;
+
+          }
+          //Move current vector value from first row into second row as well
+          i_s(stoi(line[1])-1) = i_s(stoi(line[2])-1);
+          //Making of supernode means 0 conductance between nodes
+          con_s(stoi(line[1])-1, stoi(line[2])-1) = 0;
+          //Add in 1 and -1 to first row to represent voltage source
+          con_s(stoi(line[2])-1, stoi(line[2])-1) = 1;
+          con_s(stoi(line[2])-1, stoi(line[1])-1) = -1;
+          //Place value of source into voltage vector, but negative as in first row nodes are flipped
+          //Check for if DC source
+          if(line.size() < 4){
+            i_s(stoi(line[2])-1) = ctod(line[3]);
+          }
+          //Sine source needs to be inverted in different way
+            else{
+              i_s(stoi(line[2])-1) = ctod(line[4])+(ctod(line[5])*sin(2*M_PI*t*ctod(line[6])));
+
+
+            }
+
+
+          }
+
+        }
+
 
     }
     if(line[0].find('I')==0){
