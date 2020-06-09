@@ -247,37 +247,24 @@ int main()
             //Divide total charge by capacitance to update current vector value
             i_s(stoi(line[1])-1) = charges[line[0]]/timeStep;
 
-          }
-          else{
-          //Only do this calculation once so we treat it like voltage source
-            if(stoi(line[1])>stoi(line[2])){
-              //Find difference in voltage nodes and multiply by capacitance to get charges
-              double cc = 0;
-              cc = (v_s(stoi(line[2])-1) - v_s(stoi(line[1])-1))*ctod(line[3]);
-              charges[line[0]] += cc;
-              //Divide total charge by capacitance to update current vector value
-              i_s(stoi(line[2])-1) = charges[line[0]]/timeStep;
-
-              }
             }
-        }
-
-        if(line[0].find('V')==0 && line.size()>4){
-          //Check for reference node
-          if(stoi(line[2])==0){
-              i_s(stoi(line[1])-1) = ctod(line[4])+(ctod(line[5])*sin(2*M_PI*t*ctod(line[6])));
-          }
           else{
-            //Only do this calculation once for second time voltage source appears
-              if(stoi(line[1])>stoi(line[2])){
-                  i_s(stoi(line[2])-1) = ctod(line[4])+(ctod(line[5])*sin(2*M_PI*t*ctod(line[6])));
+            //Find difference in voltage nodes and multiply by capacitance to get charges
+            double cc = 0;
+            cc = (v_s(stoi(line[1])-1) - v_s(stoi(line[2])-1))*ctod(line[3]);
+            charges[line[0]] += cc;
+            //Divide total charge by capacitance to update current vector value
+            i_s(stoi(line[1])-1) = charges[line[0]]/timeStep;
 
+            }
           }
 
-        }
 
+        if(line[0].find('V')==0 && line[4]=="SINE"){
+          i_s(stoi(line[1])-1) = ctod(line[4])+(ctod(line[5])*sin(2*M_PI*t*ctod(line[6])));
+          }
+        }
       }
-    }
     if(node_max>16){
       v_l = con_l.PartialPivLU().solve(i_l);
     }
