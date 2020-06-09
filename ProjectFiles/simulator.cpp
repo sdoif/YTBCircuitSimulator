@@ -83,27 +83,27 @@ int main()
   //Creating appropriate matrices / vectors
   Matrix<double, Dynamic, Dynamic, 0, 16, 16> con_s;
   if(node_max<17){
-    con_s.resize(node_max, node_max);
+    con_s = MatrixXd::Zero(node_max, node_max);
   }
   Matrix<double, Dynamic, Dynamic, 0, 16, 1> i_s;
   if(node_max<17){
-    i_s.resize(node_max, 1);
+    i_s = VectorXd::Zero(node_max);
   }
   Matrix<double, Dynamic, Dynamic, 0, 16, 1> v_s;
   if(node_max<17){
-    v_s.resize(node_max, 1);
+    v_s = VectorXd::Zero(node_max);
   }
   MatrixXd con_l;
   if(node_max>16){
-    con_l.resize(node_max,node_max);
+    con_l = MatrixXd::Zero(node_max,node_max);
   }
   VectorXd v_l;
   if(node_max>16){
-    v_l.resize(node_max,1);
+    v_l = VectorXd::Zero(node_max);
   }
   VectorXd i_l;
   if(node_max>16){
-    i_l.resize(node_max,1);
+    i_l = VectorXd::Zero(node_max);
   }
 
   /*TO-DO: Update the values of the conductance matrix / current / voltage vectors for each component
