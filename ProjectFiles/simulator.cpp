@@ -2,12 +2,14 @@
 #include <Eigen/Dense>
 #include <algorithm>
 #include <cmath>
+#include <map>
 
 using namespace Eigen;
 
 bool netlist_sort(vector<string> &a, vector<string> &b);
 bool component(char a, char b);
 double ctod(string v);
+map<string, double> charges;
 
 int main()
 {
@@ -131,6 +133,8 @@ int main()
 
     }
     if(line[0].find('C')==0){
+      //Add charge value to map
+      charges[line[0]] = 0;
       //Check if connected to reference node
       if(stoi(line[2]) == 0){
         //Inserting 1 into respective node
@@ -169,9 +173,17 @@ int main()
       if(stoi(line[2]) == 0){
         //Inserting 1 into respective node
           con_s(stoi(line[1])-1, stoi(line[1])-1) = 1;
-          //Insert value of source into voltage vector
-          i_s(stoi(line[1])-1) = ctod(line[3]);
+          //Insert value of source into current vector if DC source
+          if(line.size() < 5){
+            i_s(stoi(line[1])-1) = ctod(line[3]);
+          }
+          //Initialise current vector for sine source at DC offset
+          else{
+            double t = 0;
+            i_s(stoi(line[1])-1) = ctod(line[4])+(ctod(line[5])*sin(2*M_PI*t*ctod(line[6])));
 
+
+          }
       }
       //All other cases when it is connected to 2 non-reference nodes
       else{
@@ -192,11 +204,12 @@ int main()
           con_s(stoi(line[2])-1, stoi(line[1])-1) = -1;
           //Place value of source into voltage vector, but negative as in first row nodes are flipped
           //Check for if DC source
-          if(line.size() < 4){
+          if(line.size() < 5){
             i_s(stoi(line[2])-1) = ctod(line[3]);
           }
-          //Sine source needs to be inverted in different way
+          //Initialise current vector for sine source at DC offset
             else{
+              double t = 0;
               i_s(stoi(line[2])-1) = ctod(line[4])+(ctod(line[5])*sin(2*M_PI*t*ctod(line[6])));
 
 
