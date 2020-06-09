@@ -1,22 +1,48 @@
 #include <iostream>
 #include <string>
-#include <Eigen/Dense>
+#include <cmath>
 
 using namespace std;
-using namespace Eigen;
+
+double ctod(string v)
+{
+  double value;
+  if(v.rfind('p')!=string::npos){
+    value = stod(v.substr(0,v.rfind('p'))) * pow(10,-12);
+    return value;
+  }
+  if(v.find('n')!=string::npos){
+    value = stod(v.substr(0,v.rfind('n'))) * pow(10,-9);
+    return value;
+  }
+  if(v.find('u')!=string::npos){
+    value = stod(v.substr(0,v.rfind('u'))) * pow(10,-6);
+    return value;
+  }
+  if(v.find('m')!=string::npos){
+    value = stod(v.substr(0,v.rfind('m'))) * pow(10,-3);
+    return value;
+  }
+  if(v.find('k')!=string::npos){
+    value = stod(v.substr(0,v.rfind('k'))) * pow(10,3);
+    return value;
+  }
+  if(v.find("Meg")!=string::npos){
+    value = stod(v.substr(0,v.rfind("Meg"))) * pow(10,6);
+    return value;
+  }
+  if(v.find('G')!=string::npos){
+    value = stod(v.substr(0,v.rfind('G'))) * pow(10,9);
+    return value;
+  }
+  value = stod(v);
+  return value;
+}
 
 int main()
 {
-  string in;
-  cin>>in;
-  int x = stoi(in);
-  cout<<x<<endl;
-  bool small = x<17;
-  MatrixXd con_l;
-  Matrix<double, Dynamic, Dynamic, 0, 16, 16> (small ? con : con_s);
-
-  con_s.resize(3,3);
-  con_s << 1,2,3, 4,5,6, 7,8,9;
-  cout<<"success"<<endl;
+  string x;
+  cin>>x;
+  cout<<ctod(x)<<endl;
 
 }

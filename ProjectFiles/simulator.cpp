@@ -1,8 +1,12 @@
 #include "netlist_reader.hpp"
 #include <Eigen/Dense>
-#include <cmath>
+#include <algorithm>
 
 using namespace Eigen;
+
+bool netlist_sort(vector<string> &a, vector<string> &b);
+bool component(char a, char b);
+double ctod(string v);
 
 int main()
 {
@@ -18,44 +22,88 @@ int main()
       break;
     }
     if(line[0]==".tran"){
+      if(line[2].find('s')!=string::npos){
+        line[2].erase(line[2].find('s'),1);
+      }
+      if(line[4].find('s')!=string::npos){
+        line[4].erase(line[4].find('s'),1);
+      }
       tran = line;
     }
     else{
       int node;
-      if(line[1].find('N')!=string::npos){
-        line[1].erase('N');
+      if(line[1].rfind('N',0)==0){
+        line[1].erase(0,1);
       }
       node=stoi(line[1]);
       if(node>node_max){
         node_max = node;
       }
-      if(line[2].find('N')!=string::npos){
-        line[2].erase('N');
+      if(line[2].rfind('N',0)==0){
+        line[2].erase(0,1);
       }
       node=stoi(line[2]);
       if(node>node_max){
         node_max = node;
       }
-      input.push_back(line);
+      if(line[1]!="0"){
+        input.push_back(line);
+      }
+      swap(line[1], line[2]);
+      if(line[0].rfind('V',0)==0 || line[0].rfind('I',0)==0){
+        if(line.size()==4){
+          if(line[3].rfind('-',0)==0){
+            line[3].erase(0,1);
+          }else{
+            line[3]="-"+line[3];
+          }
+        }
+        if(line.size()==7){
+          if(line[5].rfind('-',0)==0){
+            line[5].erase(0,1);
+          }else{
+            line[5]="-"+line[5];
+          }
+          line.push_back("1");
+        }
+      }
+      if(line[1]!="0"){
+        input.push_back(line);
+      }
     }
   }
-  if(tran.empty()){
-    cerr<<"No simulation settings specified"<<endl;
+  if(tran.size()!=5){
+    cerr<<"Simulation settings incorrectly specified"<<endl;
     return 1;
   }
 
+  sort(input.begin(), input.end(), netlist_sort);
+
   //Creating appropriate matrices / vectors
-//  int nodes = node_max+1;
   Matrix<double, Dynamic, Dynamic, 0, 16, 16> con_s;
   if(node_max<17){
     con_s.resize(node_max, node_max);
+  }
+  Matrix<double, Dynamic, Dynamic, 0, 16, 1> i_s;
+  if(node_max<17){
+    i_s.resize(node_max, 1);
+  }
+  Matrix<double, Dynamic, Dynamic, 0, 16, 1> v_s;
+  if(node_max<17){
+    v_s.resize(node_max, 1);
   }
   MatrixXd con_l;
   if(node_max>16){
     con_l.resize(node_max,node_max);
   }
-  VectorXd v(node_max);
-  VectorXd i(node_max);
+  VectorXd v_l;
+  if(node_max>16){
+    v_l.resize(node_max,1);
+  }
+  VectorXd i_l;
+  if(node_max>16){
+    i_l.resize(node_max,1);
+  }
 
   /*TO-DO: Update the values of the conductance matrix / current / voltage vectors for each component
   Potential to move to another hpp file netlist_process? */
@@ -159,4 +207,85 @@ int main()
 
     }
   }
+
+  //Transient analysis
+  double stopTime = ctod(tran[2]);
+  double timeStep = ctod(tran[4]);
+  for(double t=0; t<=stopTime; t+=timeStep){
+    if(node_max<17){
+      v_s = con_s.ColPivHouseholderQR().solve(i_s);
+    }
+    if(node_max>16){
+      v_l = con_l.PartialPivLU().solve(i_l);
+    }
+  }
+
+}
+
+bool component(char a, char b)
+{
+  if(a=='V' && b!='V'){
+    return true;
+  }
+  if(a=='C' && b!='V' && b!='C'){
+    return true;
+  }
+  if(a=='I' && b!='V' && b!='C' && b!='I'){
+    return true;
+  }
+  if(a=='L' && b=='R'){
+    return true;
+  }
+  return false;
+}
+
+bool netlist_sort(vector<string> &a, vector<string> &b)
+{
+  if(a[1]<b[1]){
+    return true;
+  }
+  if(a[1]==b[1]){
+    if(component(a[0][0], b[0][0])){
+      return true
+    }
+    if(a[0][0] == b[0][0]){
+      return a[2]<b[2];
+    }
+  }
+  return false;
+}
+
+double ctod(string v)
+{
+  double value;
+  if(v.rfind('p')!=string::npos){
+    value = stod(v.substr(0,v.rfind('p'))) * pow(10,-12);
+    return value;
+  }
+  if(v.find('n')!=string::npos){
+    value = stod(v.substr(0,v.rfind('n'))) * pow(10,-9);
+    return value;
+  }
+  if(v.find('u')!=string::npos){
+    value = stod(v.substr(0,v.rfind('u'))) * pow(10,-6);
+    return value;
+  }
+  if(v.find('m')!=string::npos){
+    value = stod(v.substr(0,v.rfind('m'))) * pow(10,-3);
+    return value;
+  }
+  if(v.find('k')!=string::npos){
+    value = stod(v.substr(0,v.rfind('k'))) * pow(10,3);
+    return value;
+  }
+  if(v.find("Meg")!=string::npos){
+    value = stod(v.substr(0,v.rfind("Meg"))) * pow(10,6);
+    return value;
+  }
+  if(v.find('G')!=string::npos){
+    value = stod(v.substr(0,v.rfind('G'))) * pow(10,9);
+    return value;
+  }
+  value = stod(v);
+  return value;
 }
