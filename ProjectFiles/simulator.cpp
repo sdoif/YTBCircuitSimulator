@@ -137,8 +137,18 @@ int main()
           //Add in 1 and -1 to first row to represent voltage source
           con_s(stoi(line[2])-1, stoi(line[2])-1) = 1;
           con_s(stoi(line[2])-1, stoi(line[1])-1) = -1;
-          //Place value of sourve into voltage vector, but negative as in first row nodes are flipped
-          i_s(stoi(line[2])-1) = ctod(line[3])*-1;
+          //Place value of source into voltage vector, but negative as in first row nodes are flipped
+          //Check for if DC source
+          if(line.size() < 4){
+            i_s(stoi(line[2])-1) = ctod(line[3]);
+          }
+          //Sine source needs to be inverted in different way
+          else{
+            i_s(stoi(line[2])-1) = ctod(line[4])+(ctod(line[5])*sin(2*M_PI*t*ctod(line[6])));
+
+
+          }
+
 
         }
 
