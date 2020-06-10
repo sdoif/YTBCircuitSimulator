@@ -229,10 +229,16 @@ if(line[0].find('R')==0){
 
     }
     if(line[0].find('I')==0){
-      int node = stoi(line[1]);
+      int node = stoi(line[2]);
       //If a current source is found, the value of its current will be added to respective node
-      if(node!=0){
-        i_s((node-1), 0) += ctod(line[3]);
+        if(node!=0){
+          //If sinusoidal then at t=0, only DC offset value
+          if(line[3]=="SINE"){
+            i_s((node-1), 0) += ctod(line[4]);
+          }else{
+            i_s((node-1), 0) += ctod(line[3]);
+          }
+
       }
     }
   }
@@ -269,7 +275,7 @@ if(line[0].find('R')==0){
           int l_node2 = stoi(line[2]);
           double induct_val = ctod(value[3]);
           double l_pd;
-          //Finding l_pd
+          //Finding l_pd, the PD across inductor
           if(l_node1 == 0){
             l_pd = v_s((l_node2-1),0);
         }else if(l_node2 == 0){
@@ -279,14 +285,33 @@ if(line[0].find('R')==0){
         }
         //Finding di, the change in current and the inductors contribution to that node's current
         double di_l = (l_pd*timeStep)/induct_val;
-        i_s((l_node2 - 1), 0) += di_l;
-        i_s((l_node1 -1), 0) -= di_l;
+        if(l_node2!=0){
+          i_s((l_node2 - 1), 0) += di_l;
+        }else if(l_node1!=0){
+          i_s((l_node1 -1), 0) -= di_l;
+        }
         //Find add di to current going through inductor
         induct_i[line[0]]+=di_l;
 
         }
 
+<<<<<<< HEAD
         //Capacitor processing
+=======
+        if(line[0].find('I')==0 && line[3]=="SINE"){
+          int node2 = stoi(line[2]);
+          int node1 = stoi(line[1]);
+          //If a current source is found, the value of its current will be added to respective node
+          if(t!=0){
+            if(node2 != 0){
+              i_s((node2 -1),0)+= (ctod(line[5])*sin((t)*ctod(line[6])))-(ctod(line[5])*sin((t-timeStep)*ctod(line[6])));
+            }else if(node1 != 0){
+              i_s((node1 -1),0)-= (ctod(line[5])*sin((t)*ctod(line[6])))-(ctod(line[5])*sin((t-timeStep)*ctod(line[6])));
+            }
+          }
+        }
+
+>>>>>>> RLandCS_testing
         if(line[0].find('C')==0){
           //Check for reference node
           if(stoi(line[2])==0){
