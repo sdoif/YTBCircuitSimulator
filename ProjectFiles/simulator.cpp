@@ -251,6 +251,7 @@ if(line[0].find('R')==0){
   double stopTime = ctod(tran[2]);
   double timeStep = ctod(tran[4]);
   //CSV Output
+  cout<<"Time,";
   for(int l=1; l<=node_max; l++){
     cout<<"N"<<setfill('0')<<setw(3)<<l<<",";
   }
@@ -261,6 +262,7 @@ if(line[0].find('R')==0){
 
   for(double t=0; t<=stopTime; t+=timeStep){
     if(node_max<17){
+      cout<<t<<",";
       v_s = con_s.colPivHouseholderQr().solve(i_s);
       for(int l=0; l<v_s.size(); l++){
         cout<<v_s(l)<<",";
