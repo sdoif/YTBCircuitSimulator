@@ -288,9 +288,9 @@ if(line[0].find('R')==0){
           //If a current source is found, the value of its current will be added to respective node
           if(t!=0){
             if(node2 != 0){
-              i_s((node2 -1),0)+= (ctod(line[5])*sin(t*ctod(line[6])));
+              i_s((node2 -1),0)+= (ctod(line[5])*sin((t)*ctod(line[6])))-(ctod(line[5])*sin((t-timeStep)*ctod(line[6])));
             }else if(node1 != 0){
-              i_s((node1 -1),0)-= ctod(line[5])*sin(t*ctod(line[6]));
+              i_s((node1 -1),0)-= (ctod(line[5])*sin((t)*ctod(line[6])))-(ctod(line[5])*sin((t-timeStep)*ctod(line[6])));
             }
           }
         }
