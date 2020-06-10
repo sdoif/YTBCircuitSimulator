@@ -168,7 +168,7 @@ if(line[0].find('R')==0){
     }
 
     if(line[0].find('L')==0){
-
+//do nothing
     }
     if(line[0].find('V')==0){
       //Check if connected to reference node
@@ -245,6 +245,27 @@ if(line[0].find('R')==0){
       //Cycle  through elements to find ones that need to be updated every cycle
       for(int y=0; y=input.size(); y++){
         vector<string> line = input[y];
+
+        if(line[0].find('L')==0){
+          //Initialising variables for node numbers, inductance and PD across inductor
+          int l_node1 = stoi(line[1]);
+          int l_node2 = stoi(line[2]);
+          double induct_val = ctod(value[3]);
+          double l_pd;
+          //Finding l_pd
+          if(l_node1 == 0){
+            l_pd = v_s((l_node2-1),0);
+        }else if(l_node2 == 0){
+            l_pd = -(v_s((l_node1-1),0));
+        }else{
+            l_pd = (v_s((l_node2-1),0))-(v_s((l_node1-1),0));
+        }
+        //Finding di, the change in current and the inductors contribution to that node's current
+        double di_l = (l_pd*timeStep)/induct_val;
+        i_s((l_node2 - 1), 0) += di_l;
+        i_s((l_node1 -1), 0) -= di_l;
+        //Find current going through an inductor by solving differential equation
+        }
 
         if(line[0].find('C')==0){
           //Check for reference node
