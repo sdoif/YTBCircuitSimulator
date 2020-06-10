@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <map>
+#include <iomanip>
 
 using namespace Eigen;
 
@@ -249,6 +250,7 @@ if(line[0].find('R')==0){
   //Transient analysis
   double stopTime = ctod(tran[2]);
   double timeStep = ctod(tran[4]);
+  //CSV Output
   for(int l=1; l<=node_max; l++){
     cout<<"N"<<setfill('0')<<setw(3)<<l<<",";
   }
@@ -259,9 +261,9 @@ if(line[0].find('R')==0){
 
   for(double t=0; t<=stopTime; t+=timeStep){
     if(node_max<17){
-      v_s = con_s.ColPivHouseholderQR().solve(i_s);
+      v_s = con_s.colPivHouseholderQr().solve(i_s);
       for(int l=0; l<v_s.size(); l++){
-        cout<<v_s(l)<<","
+        cout<<v_s(l)<<",";
       }
       //Cycle  through elements to find ones that need to be updated every cycle
       for(int y=0; y=input.size(); y++){
@@ -273,7 +275,7 @@ if(line[0].find('R')==0){
           //Initialising variables for node numbers, inductance and PD across inductor
           int l_node1 = stoi(line[1]);
           int l_node2 = stoi(line[2]);
-          double induct_val = ctod(value[3]);
+          double induct_val = ctod(line[3]);
           double l_pd;
           //Finding l_pd, the PD across inductor
           if(l_node1 == 0){
@@ -295,28 +297,30 @@ if(line[0].find('R')==0){
 
         }
 
-<<<<<<< HEAD
-        //Capacitor processing
-=======
-        if(line[0].find('I')==0 && line[3]=="SINE"){
-          int node2 = stoi(line[2]);
-          int node1 = stoi(line[1]);
-          //If a current source is found, the value of its current will be added to respective node
-          if(t!=0){
-            if(node2 != 0){
-              i_s((node2 -1),0)+= (ctod(line[5])*sin((t)*ctod(line[6])))-(ctod(line[5])*sin((t-timeStep)*ctod(line[6])));
-            }else if(node1 != 0){
+        //Current source processing
+        if(line[0].find('I')==0){
+          if(line[3]=="SINE"){
+            int node2 = stoi(line[2]);
+            int node1 = stoi(line[1]);
+            cout<<(ctod(line[4])+(ctod(line[5])*sin(ctod(line[6])*t)))<<",";
+            //If a current source is found, the value of its current will be added to respective node
+            if(t!=0){
+              if(node2 != 0){
+                i_s((node2 -1),0)+= (ctod(line[5])*sin((t)*ctod(line[6])))-(ctod(line[5])*sin((t-timeStep)*ctod(line[6])));
+              }
               i_s((node1 -1),0)-= (ctod(line[5])*sin((t)*ctod(line[6])))-(ctod(line[5])*sin((t-timeStep)*ctod(line[6])));
             }
+          }else{
+            cout<<ctod(line[3])<<",";
           }
         }
 
->>>>>>> RLandCS_testing
+        //Capacitor processing
         if(line[0].find('C')==0){
           //Check for reference node
           if(stoi(line[2])==0){
             //Find difference in voltage nodes (in this case value of one node) and multiply by capacitance to get charges
-            double cc = (v_s(stoi(line[1])-1)*ctod(line[3]);
+            double cc = (v_s(stoi(line[1])-1)*ctod(line[3]));
             cout<<cc/timeStep<<",";
             charges[line[0]] += cc;
             //Divide total charge by capacitance to update current vector value
@@ -346,17 +350,17 @@ if(line[0].find('R')==0){
         if(line[0].find('R')==0){
           if(line[2]=="0"){
             double current = v_s(stoi(line[1])-1)/ctod(line[3]);
-            cout<<current<<","
+            cout<<current<<",";
           }else{
             double current = (v_s(stoi(line[1])-1) - v_s(stoi(line[2])-1))/ctod(line[3]);
-            cout<<current<<","
+            cout<<current<<",";
           }
 
         }
         }
       }
     if(node_max>16){
-      v_l = con_l.PartialPivLU().solve(i_l);
+      v_l = con_l.partialPivLu().solve(i_l);
     }
     cout<<"\n";
   }
