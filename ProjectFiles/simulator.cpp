@@ -13,6 +13,7 @@ double ctod(string v);
 int main()
 {
   map<string, double> charges;
+  map<string, double> induct_i;
   //Netlist management
   vector<vector<string>> input;
   vector<string> tran;
@@ -170,7 +171,8 @@ if(line[0].find('R')==0){
     }
 
     if(line[0].find('L')==0){
-//do nothing
+//Initialise current mapping to 0
+    induct_i[line[0]]=0;
     }
     if(line[0].find('V')==0){
       //Check if connected to reference node
@@ -267,6 +269,8 @@ if(line[0].find('R')==0){
         i_s((l_node2 - 1), 0) += di_l;
         i_s((l_node1 -1), 0) -= di_l;
         //Find current going through an inductor by solving differential equation
+
+
         }
 
         if(line[0].find('C')==0){
