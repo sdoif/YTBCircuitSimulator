@@ -172,7 +172,7 @@ if(line[0].find('R')==0){
 
     if(line[0].find('L')==0){
 //Initialise current mapping to 0
-    induct_i[line[0]]=0;
+    //induct_i[line[0]]=0;
     }
     if(line[0].find('V')==0){
       //Check if connected to reference node
@@ -268,8 +268,8 @@ if(line[0].find('R')==0){
         double di_l = (l_pd*timeStep)/induct_val;
         i_s((l_node2 - 1), 0) += di_l;
         i_s((l_node1 -1), 0) -= di_l;
-        //Find current going through an inductor by solving differential equation
-
+        //Find add di to current going through inductor
+        induct_i[line[0]]+=di_l;
 
         }
 
