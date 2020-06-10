@@ -212,12 +212,12 @@ if(line[0].find('R')==0){
           //Place value of source into current vector
           //Check for if DC source
           if(line[3]!="SINE"){
-            i_s(stoi(line[2])-1) = ctod(line[3]);
+            i_s(stoi(line[2])-1) = ctod(line[3])*(-1);
           }
           //Initialise current vector for sine source at DC offset
             else{
               double t = 0;
-              i_s(stoi(line[2])-1) = ctod(line[4])+(ctod(line[5])*sin(2*M_PI*t*ctod(line[6])));
+              i_s(stoi(line[2])-1) = ((-1)*ctod(line[4]))+((-1)*ctod(line[5]))*sin(2*M_PI*t*ctod(line[6])));
 
 
             }
