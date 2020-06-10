@@ -261,7 +261,9 @@ if(line[0].find('R')==0){
       for(int y=0; y=input.size(); y++){
         vector<string> line = input[y];
 
+        //Inductor processing
         if(line[0].find('L')==0){
+          cout<<induct_i[line[0]]<<",";
           //Initialising variables for node numbers, inductance and PD across inductor
           int l_node1 = stoi(line[1]);
           int l_node2 = stoi(line[2]);
@@ -284,6 +286,7 @@ if(line[0].find('R')==0){
 
         }
 
+        //Capacitor processing
         if(line[0].find('C')==0){
           //Check for reference node
           if(stoi(line[2])==0){
