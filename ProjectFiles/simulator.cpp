@@ -272,11 +272,22 @@ if(line[0].find('R')==0){
         }
         //Finding di, the change in current and the inductors contribution to that node's current
         double di_l = (l_pd*timeStep)/induct_val;
-        i_s((l_node2 - 1), 0) += di_l;
-        i_s((l_node1 -1), 0) -= di_l;
+        if(l_node2!=0){
+          i_s((l_node2 - 1), 0) += di_l;
+        }else if(l_node1!=0){
+          i_s((l_node1 -1), 0) -= di_l;
+        }
         //Find add di to current going through inductor
         induct_i[line[0]]+=di_l;
 
+        }
+
+        if(line[0].find('I')==0 && line[3]=="SINE"){
+          int node = stoi(line[2]);
+          //If a current source is found, the value of its current will be added to respective node
+            if(node!=0){
+
+            }
         }
 
         if(line[0].find('C')==0){
