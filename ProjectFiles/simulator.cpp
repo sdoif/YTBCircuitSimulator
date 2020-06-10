@@ -283,11 +283,16 @@ if(line[0].find('R')==0){
         }
 
         if(line[0].find('I')==0 && line[3]=="SINE"){
-          int node = stoi(line[2]);
+          int node2 = stoi(line[2]);
+          int node1 = stoi(line[1]);
           //If a current source is found, the value of its current will be added to respective node
-            if(node!=0){
-
+          if(t!=0){
+            if(node2 != 0){
+              i_s((node2 -1),0)+= (ctod(line[5])*sin(t*ctod(line[6])));
+            }else if(node1 != 0){
+              i_s((node1 -1),0)-= ctod(line[5])*sin(t*ctod(line[6]));
             }
+          }
         }
 
         if(line[0].find('C')==0){
