@@ -1,0 +1,9 @@
+*Simple Circuit
+
+V1 N001 0 5
+R1 N001 N002 50
+R2 N001 N002 500m
+R3 N002 0 0.1k
+
+.tran 0 10ms 0 0.1ms
+.end
