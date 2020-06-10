@@ -114,38 +114,30 @@ int main()
     i_l = VectorXd::Zero(node_max);
   }
 
-  /*TO-DO: Update the values of the conductance matrix / current / voltage vectors for each component
-  Potential to move to another hpp file netlist_process? */
+  //Intialisation
   for(int l=0; l<input.size(); l++){
     vector<string> line = input[l];
-//The 0th index of the line vector contains the designator and hence looking at the 0th char of the string
-//will tell us what component it is
-if(line[0].find('R')==0){
-    double r_con = 1/(ctod(line[3]));
-    //Adding to total conductances indicies
+    //Resistor processing
+    if(line[0].find('R')==0){
+      double r_con = 1/(ctod(line[3]));
+      //Adding to total conductances indicies
       if(stoi(line[1])!=0){
         con_s(stoi(line[1])-1, stoi(line[1])-1) += r_con;
       }
-//since we changed the input processing this wont be needed
-    /* if(stoi(line[2])!=0){
-        con_s(stoi(line[2])-1, stoi(line[2])-1) += r_con;
-      }*/
-    //Allocate respective index in matrix
-    if((stoi(line[1])!=0)&&(stoi(line[2])!=0)){
-      con_s(stoi(line[1])-1, stoi(line[2])-1) -= r_con;
+      //Allocate respective index in matrix
+      if((stoi(line[1])!=0)&&(stoi(line[2])!=0)){
+        con_s(stoi(line[1])-1, stoi(line[2])-1) -= r_con;
+      }
     }
-//since we changed the input processing this wont be needed
-    //con_s(stoi(line[2])-1, stoi(line[1])-1) = -r_con;
 
-  }
+    //Capacitor processing
     if(line[0].find('C')==0){
       //Add charge value to map
       charges[line[0]] = 0;
       //Check if connected to reference node
       if(stoi(line[2]) == 0){
         //Inserting 1 into respective node
-          con_s(stoi(line[1])-1, stoi(line[1])-1) = 1;
-
+        con_s(stoi(line[1])-1, stoi(line[1])-1) = 1;
       }
       //All other cases when it is connected to 2 non-reference nodes
       else{
@@ -155,7 +147,6 @@ if(line[0].find('R')==0){
           for(int x=0; x<con_s.cols(); x++){
             con_s(stoi(line[1])-1, x) = con_s(stoi(line[2])-1, x);
             con_s(stoi(line[2])-1, x) = 0;
-
           }
           //Move current vector value from first row into second row as well
           i_s(stoi(line[1])-1) = i_s(stoi(line[2])-1);
@@ -164,32 +155,24 @@ if(line[0].find('R')==0){
           //Add in 1 and -1 to first row to represent voltage source
           con_s(stoi(line[2])-1, stoi(line[2])-1) = 1;
           con_s(stoi(line[2])-1, stoi(line[1])-1) = -1;
-
         }
-
       }
-
     }
 
-    if(line[0].find('L')==0){
-//Initialise current mapping to 0
-    //induct_i[line[0]]=0;
-    }
+    //Voltage processing
     if(line[0].find('V')==0){
       //Check if connected to reference node
       if(stoi(line[2]) == 0){
         //Inserting 1 into respective node
           con_s(stoi(line[1])-1, stoi(line[1])-1) = 1;
           //Insert value of source into current vector if DC source
-          if(line.size() < 5){
+          if(line[3]!="SINE"){
             i_s(stoi(line[1])-1) = ctod(line[3]);
           }
           //Initialise current vector for sine source at DC offset
           else{
             double t = 0;
             i_s(stoi(line[1])-1) = ctod(line[4])+(ctod(line[5])*sin(2*M_PI*t*ctod(line[6])));
-
-
           }
       }
       //All other cases when it is connected to 2 non-reference nodes
@@ -200,7 +183,6 @@ if(line[0].find('R')==0){
           for(int x=0; x<con_s.cols(); x++){
             con_s(stoi(line[1])-1, x) = con_s(stoi(line[2])-1, x);
             con_s(stoi(line[2])-1, x) = 0;
-
           }
           //Move current vector value from first row into second row as well
           i_s(stoi(line[1])-1) = i_s(stoi(line[2])-1);
@@ -217,18 +199,13 @@ if(line[0].find('R')==0){
           //Initialise current vector for sine source at DC offset
             else{
               double t = 0;
-              i_s(stoi(line[2])-1) = ((-1)*ctod(line[4]))+((-1)*ctod(line[5]))*sin(2*M_PI*t*ctod(line[6])));
-
-
+              i_s(stoi(line[2])-1) = ((-1)*ctod(line[4]))+((-1)*ctod(line[5]))*sin(2*M_PI*t*ctod(line[6]));
             }
-
-
           }
-
         }
-
-
     }
+
+    //Current source processing
     if(line[0].find('I')==0){
       int node = stoi(line[2]);
       //If a current source is found, the value of its current will be added to respective node
@@ -239,7 +216,6 @@ if(line[0].find('R')==0){
           }else{
             i_s((node-1), 0) += ctod(line[3]);
           }
-
       }
     }
   }
@@ -259,8 +235,7 @@ if(line[0].find('R')==0){
     cout<<(input[l])[0]<<",";
   }
   cout<<"\n";
-
-  for(double t=0; t<=stopTime; t+=timeStep){
+  for(double t=0.0; t<=stopTime; t+=timeStep){
     if(node_max<17){
       cout<<t<<",";
       v_s = con_s.colPivHouseholderQr().solve(i_s);
@@ -268,9 +243,8 @@ if(line[0].find('R')==0){
         cout<<v_s(l)<<",";
       }
       //Cycle  through elements to find ones that need to be updated every cycle
-      for(int y=0; y=input.size(); y++){
+      for(int y=0; y<input.size(); y++){
         vector<string> line = input[y];
-
         //Inductor processing
         if(line[0].find('L')==0){
           cout<<induct_i[line[0]]<<",";
@@ -296,7 +270,6 @@ if(line[0].find('R')==0){
         }
         //Find add di to current going through inductor
         induct_i[line[0]]+=di_l;
-
         }
 
         //Current source processing
@@ -327,7 +300,6 @@ if(line[0].find('R')==0){
             charges[line[0]] += cc;
             //Divide total charge by capacitance to update current vector value
             i_s(stoi(line[1])-1) = charges[line[0]]/timeStep;
-
             }
           else{
             //Find difference in voltage nodes and multiply by capacitance to get charges
@@ -336,7 +308,6 @@ if(line[0].find('R')==0){
             charges[line[0]] += cc;
             //Divide total charge by capacitance to update current vector value
             i_s(stoi(line[1])-1) = charges[line[0]]/timeStep;
-
             }
           }
 
@@ -357,16 +328,14 @@ if(line[0].find('R')==0){
             double current = (v_s(stoi(line[1])-1) - v_s(stoi(line[2])-1))/ctod(line[3]);
             cout<<current<<",";
           }
-
-        }
         }
       }
+    }
     if(node_max>16){
       v_l = con_l.partialPivLu().solve(i_l);
     }
     cout<<"\n";
   }
-
 }
 
 bool component(char a, char b)
