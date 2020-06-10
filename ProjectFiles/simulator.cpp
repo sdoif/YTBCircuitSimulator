@@ -229,10 +229,16 @@ if(line[0].find('R')==0){
 
     }
     if(line[0].find('I')==0){
-      int node = stoi(line[1]);
+      int node = stoi(line[2]);
       //If a current source is found, the value of its current will be added to respective node
-      if(node!=0){
-        i_s((node-1), 0) += ctod(line[3]);
+        if(node!=0){
+          //If sinusoidal then at t=0, only DC offset value
+          if(line[3]=="SINE"){
+            i_s((node-1), 0) += ctod(line[4]);
+          }else{
+            i_s((node-1), 0) += ctod(line[3]);
+          }
+
       }
     }
   }
@@ -256,7 +262,7 @@ if(line[0].find('R')==0){
           int l_node2 = stoi(line[2]);
           double induct_val = ctod(value[3]);
           double l_pd;
-          //Finding l_pd
+          //Finding l_pd, the PD across inductor
           if(l_node1 == 0){
             l_pd = v_s((l_node2-1),0);
         }else if(l_node2 == 0){
