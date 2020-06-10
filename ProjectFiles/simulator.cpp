@@ -243,7 +243,7 @@ if(line[0].find('R')==0){
   //Transient analysis
   double stopTime = ctod(tran[2]);
   double timeStep = ctod(tran[4]);
-  for(int l=1; l<=v.size(); l++){
+  for(int l=1; l<=node_max; l++){
     cout<<"N"<<setfill('0')<<setw(3)<<l<<",";
   }
   for(int l=0; l<input.size(); l++){
