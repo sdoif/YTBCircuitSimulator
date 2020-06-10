@@ -129,7 +129,9 @@ if(line[0].find('R')==0){
         con_s(stoi(line[2])-1, stoi(line[2])-1) += r_con;
       }*/
     //Allocate respective index in matrix
-    con_s(stoi(line[1])-1, stoi(line[2])-1) -= r_con;
+    if((stoi(line[1])!=0)&&(stoi(line[2])!=0)){
+      con_s(stoi(line[1])-1, stoi(line[2])-1) -= r_con;
+    }
 //since we changed the input processing this wont be needed
     //con_s(stoi(line[2])-1, stoi(line[1])-1) = -r_con;
 
