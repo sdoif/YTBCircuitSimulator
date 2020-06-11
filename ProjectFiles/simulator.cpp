@@ -340,16 +340,16 @@ int main()
 
 bool component(char a, char b)
 {
-  if(a=='V' && b!='V'){
+  if(a=='I' && b!='I'){
     return true;
   }
-  if(a=='C' && b!='V' && b!='C'){
+  if(a=='L' && b!='I' && b!='L'){
     return true;
   }
-  if(a=='I' && b!='V' && b!='C' && b!='I'){
+  if(a=='R' && b!='I' && b!='L' && b!='R'){
     return true;
   }
-  if(a=='L' && b=='R'){
+  if(a=='V' && b=='C'){
     return true;
   }
   return false;
