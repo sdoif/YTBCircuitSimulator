@@ -1,13 +1,15 @@
 1st Year Project -- LT Spice Circuit Simulator
+Created by Simon Staal, Salman Daihf and Ruwan Silva
 
-Troubleshooting:
-Made some changes to input processing. Experiencing a seg fault for inputs of the type:
-Vx node1 node2 value
-Ix node1 node2 value
+Welcome to our Spice-like circuit simulator. The aim of this software is to
+perform a transient analysis on a circuit of up to 100 nodes, with options to
+specify the stop time and time-step of the simulation. DC and sinusoidal voltage
+and current sources are supported, with several parameters affecting these. Full
+notes of supported components and netlist formatting can be found in
+netlist_spec.txt
 
-From troubleshooting i've isolated the cause of the segfault to:
-line[4].rfind('-',0)==0
-no idea why that causes a segfault. The same structure is used for inputs of the form:
-Vx node1 node2 sine(value value value)
-Ix node1 node2 sine(value value value)
-And works without issue there.
+Our software requires the instillation of the Eigen library for matrix processing.
+Simply download the latest release here: http://eigen.tuxfamily.org/index.php?title=Main_Page
+To install, put the folder in /usr/local/include/
+Running simulator_compile.sh will create a binary of the program called simulator,
+you can stream the input netlist via cin and capture the output via cout.
