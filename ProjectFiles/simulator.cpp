@@ -136,6 +136,10 @@ int main()
       charges[line[0]] = 0;
       //Check if connected to reference node
       if(stoi(line[2]) == 0){
+        //loop to make all indexes in row=0
+        for(int x=0; x<con_s.cols(); x++){
+          con_s(stoi(line[1])-1, x) = 0
+        }
         //Inserting 1 into respective node
         con_s(stoi(line[1])-1, stoi(line[1])-1) = 1;
       }
@@ -163,6 +167,10 @@ int main()
     if(line[0].find('V')==0){
       //Check if connected to reference node
       if(stoi(line[2]) == 0){
+        //loop to make all indexes in row=0
+        for(int x=0; x<con_s.cols(); x++){
+          con_s(stoi(line[1])-1, x) = 0
+        }
         //Inserting 1 into respective node
           con_s(stoi(line[1])-1, stoi(line[1])-1) = 1;
           //Insert value of source into current vector if DC source
@@ -171,8 +179,7 @@ int main()
           }
           //Initialise current vector for sine source at DC offset
           else{
-            double t = 0;
-            i_s(stoi(line[1])-1) = ctod(line[4])+(ctod(line[5])*sin(2*M_PI*t*ctod(line[6])));
+            i_s(stoi(line[1])-1) = ctod(line[4]);
           }
       }
       //All other cases when it is connected to 2 non-reference nodes
@@ -198,8 +205,7 @@ int main()
           }
           //Initialise current vector for sine source at DC offset
             else{
-              double t = 0;
-              i_s(stoi(line[2])-1) = ((-1)*ctod(line[4]))+((-1)*ctod(line[5]))*sin(2*M_PI*t*ctod(line[6]));
+              i_s(stoi(line[2])-1) = ((-1)*ctod(line[4]));
             }
           }
         }
