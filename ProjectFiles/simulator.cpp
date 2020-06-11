@@ -138,7 +138,7 @@ int main()
       if(stoi(line[2]) == 0){
         //loop to make all indexes in row=0
         for(int x=0; x<con_s.cols(); x++){
-          con_s(stoi(line[1])-1, x) = 0
+          con_s(stoi(line[1])-1, x) = 0;
         }
         //Inserting 1 into respective node
         con_s(stoi(line[1])-1, stoi(line[1])-1) = 1;
@@ -169,7 +169,7 @@ int main()
       if(stoi(line[2]) == 0){
         //loop to make all indexes in row=0
         for(int x=0; x<con_s.cols(); x++){
-          con_s(stoi(line[1])-1, x) = 0
+          con_s(stoi(line[1])-1, x) = 0;
         }
         //Inserting 1 into respective node
           con_s(stoi(line[1])-1, stoi(line[1])-1) = 1;
