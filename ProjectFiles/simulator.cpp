@@ -299,20 +299,22 @@ int main()
         //Capacitor processing
         if(line[0].find('C')==0){
           //Check for reference node
-          double total;
+          double total = 0;
           if(stoi(line[2])==0){
-            //Find difference in voltage nodes (in this case value of one node) and multiply by capacitance to get charges
+            //multiply all conductances going into capacitor node by voltage difference of nodes to get total current into node
             for(int y=0; y<con_s.cols(); y++){
               if(y != stoi(line[1])-1){
                 double i = (con_s(y, stoi(line[1])-1))*(v_s(stoi(line[1])-1)-v_s(y));
+                //sum of currents
                 total += i;
               }
             }
 
-            //double cc = (((v_s(stoi(line[1])-2))-(v_s(stoi(line[1])-1)))*ctod(line[3]));
+            //output current into capacitor
             cout<<total<<",";
+            //multiply current by timestep to get additional charge stored on capacitor
             charges[line[0]] += (total*timeStep);
-            //Divide total charge by capacitance to update current vector value
+            //Divide total charge by capacitance to update current vector value for voltage provided by capacitor
             i_s(stoi(line[1])-1) = charges[line[0]]/ctod(line[3]);
             }
           else{
