@@ -304,9 +304,8 @@ int main()
             //Find difference in voltage nodes (in this case value of one node) and multiply by capacitance to get charges
             for(int y=0; y<con_s.cols(); y++){
               if(y != stoi(line[1])-1){
-                double i = (y, con_s(stoi(line[1])-1))*(v_s(stoi(line[1])-1)-v_s(y));
+                double i = (con_s(y, stoi(line[1])-1))*(v_s(stoi(line[1])-1)-v_s(y));
                 total += i;
-
               }
             }
 
