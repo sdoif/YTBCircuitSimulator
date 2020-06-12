@@ -213,14 +213,17 @@ int main()
 
     //Current source processing
     if(line[0].find('I')==0){
-      int node = stoi(line[2]);
+      int node = stoi(line[1]);
+      //cout<<node<<endl;
       //If a current source is found, the value of its current will be added to respective node
         if(node!=0){
+        //  cout<<"here if"<<endl;
           //If sinusoidal then at t=0, only DC offset value
           if(line[3]=="SINE"){
             i_s((node-1), 0) += ctod(line[4]);
           }else{
             i_s((node-1), 0) += ctod(line[3]);
+        //    cout<<"here else"<<endl;
           }
       }
     }
