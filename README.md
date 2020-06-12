@@ -1,5 +1,5 @@
 1st Year Project -- LT Spice Circuit Simulator
-Created by Simon Staal, Salman Daihf and Ruwan Silva
+Created by Simon Staal, Salman Dhaif and Ruwan Silva
 
 Welcome to our Spice-like circuit simulator. The aim of this software is to
 perform a transient analysis on a circuit of up to 100 nodes, with options to
