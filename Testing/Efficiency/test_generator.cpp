@@ -13,7 +13,7 @@ int main(){
   netlist.push_back(v);
   vector<string> r = {"R1","0","N001","100"};
   netlist.push_back(r);
-  for(int i=1; i<100; i++){
+  for(int i=1; i<101; i++){
     string filename = "test";
     filename += to_string(i);
     filename += ".txt";
