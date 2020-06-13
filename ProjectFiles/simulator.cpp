@@ -466,7 +466,7 @@ if(1){
   if(1){
     for(double t=0.0; t<=stopTime; t+=timeStep){
         cout<<t<<",";
-        v_l = con_l.partialPivLu().solve(i_l);
+        v_l = con_l.colPivHouseholderQr().solve(i_l);
         for(int l=0; l<v_l.size(); l++){
           cout<<v_l(l)<<",";
         }
