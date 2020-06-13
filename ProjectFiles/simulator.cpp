@@ -202,7 +202,7 @@ int main()
           //find total conductance connected positive end of supernode
           for(int y=0; y<con_s.cols(); y++){
             if(y < stoi(line[1])-1){
-              sc -= con_s(stoi(line[1])-1, y);
+              sc += con_s(stoi(line[1])-1, y);
             }
           }
           //Current vector value equal to value of source multiplied by conductance at positive terminal
