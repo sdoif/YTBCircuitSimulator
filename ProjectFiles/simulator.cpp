@@ -194,7 +194,7 @@ int main()
           //Copying values from first row into second row and overwrite first row
           for(int x=0; x<con_s.cols(); x++){
             if(con_s(stoi(line[2])-1)!=0){
-            con_s(stoi(line[1])-1, x) = con_s(stoi(line[2])-1, x);
+            con_s(stoi(line[1])-1, x) += con_s(stoi(line[2])-1, x);
             con_s(stoi(line[2])-1, x) = 0;
             con_s(stoi(line[1])-1, stoi(line[1])-1) += abs(con_s(stoi(line[1])-1, x));
             }
@@ -288,6 +288,7 @@ int main()
         }else{
             l_pd = (v_s((l_node2-1),0))-(v_s((l_node1-1),0));
         }
+        cout<<"PD across inductor = "<<l_pd<<endl;
         //Finding di, the change in current and the inductors contribution to that node's current
         double di_l = (l_pd*timeStep)/induct_val;
         if(l_node2!=0){
@@ -304,13 +305,17 @@ int main()
           if(line[3]=="SINE"){
             int node2 = stoi(line[2]);
             int node1 = stoi(line[1]);
-            cout<<(ctod(line[4])+(ctod(line[5])*sin(ctod(line[6])*t)))<<",";
+            cout<<(ctod(line[4])+(ctod(line[5])*sin(2*M_PI*ctod(line[6])*t)))<<",";
             //If a current source is found, the value of its current will be added to respective node
             if(t!=0){
+              //Initialise variable delta_i which calculates the increase or decrease in current from the previous instance to current one
+              //it will then increment
+              double delta_i = (ctod(line[5])*sin(2*M_PI*(t)*ctod(line[6])))-(ctod(line[5])*sin(2*M_PI*(t-timeStep)*ctod(line[6])));
               if(node2 != 0){
-                i_s((node2 -1),0)+= (ctod(line[5])*sin((t)*ctod(line[6])))-(ctod(line[5])*sin((t-timeStep)*ctod(line[6])));
+                i_s((node2 -1),0)+= delta_i;
+              }else if(node1 != 0){
+              i_s((node1 -1),0)-= delta_i;
               }
-              i_s((node1 -1),0)-= (ctod(line[5])*sin((t)*ctod(line[6])))-(ctod(line[5])*sin((t-timeStep)*ctod(line[6])));
             }
           }else{
             cout<<ctod(line[3])<<",";
