@@ -185,6 +185,7 @@ int main()
       //All other cases when it is connected to 2 non-reference nodes
       else{
         //Check for second time voltage source appears
+        double sc = 0;
         if(stoi(line[1]) > stoi(line[2])){
           //Copying values from first row into second row and overwrite first row
           for(int x=0; x<con_s.cols(); x++){
@@ -194,8 +195,14 @@ int main()
             con_s(stoi(line[1])-1, stoi(line[1])-1) += abs(con_s(stoi(line[1])-1, x));
             }
           }
-          //Move current vector value from first row into second row as well
-          i_s(stoi(line[1])-1) = i_s(stoi(line[2])-1);
+          //find total conductance connected positive end of supernode
+          for(int y=0; y<con_s.cols(); y++){
+            if(y < stoi(line[1])-1){
+              sc -= con_s(stoi(line[1])-1, y);
+            }
+          }
+          //Current vector value equal to value of source multiplied by conductance at positive terminal
+          i_s(stoi(line[1])-1) = ctod(line[3])*sc;//i_s(stoi(line[2])-1);
           //Making of supernode means 0 conductance between nodes
           con_s(stoi(line[1])-1, stoi(line[2])-1) = 0;
           //Add in 1 and -1 to first row to represent voltage source
@@ -239,6 +246,8 @@ int main()
   double stopTime = ctod(tran[2]);
   double timeStep = ctod(tran[4]);
   //CSV Output
+  cout<<con_s<<endl;
+  cout<<i_s<<endl;
   cout<<"Time,";
   for(int l=1; l<=node_max; l++){
     cout<<"N"<<setfill('0')<<setw(3)<<l<<",";
