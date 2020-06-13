@@ -3,7 +3,7 @@ set -e
 
 bash simulator_compile.sh
 
-g++ test_generator.cpp -o test_generator
+g++ test_generator_rc.cpp -o test_generator
 ./test_generator
 
 for i in {1..16}

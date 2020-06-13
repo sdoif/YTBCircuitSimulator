@@ -1,22 +1,14 @@
 #include "netlist_reader.hpp"
 #include <algorithm>
 #include <cmath>
-#include <iomanip>
 
 int main()
 {
-  int x, y;
-  cin>>x>>y;
-  vector<vector<string>> input;
-  vector<string> l = {"yes", "hi"};
-  for(int i=0; i<y; i++){
-    input.push_back(l);
+  double x,y,z;
+  cin>>x>>y>>z;
+  double stopTime = 0.01;
+  double timeStep = 1e-6;
+  for(double t=0; t<stopTime; t+=timeStep){
+    cout<<(x+y*sin(z*t*2*M_PI))<<endl;
   }
-  for(int l=1; l<=x; l++){
-    cout<<"N"<<setfill('0')<<setw(3)<<l<<",";
-  }
-  for(int l=0; l<y; l++){
-    cout<<(input[l])[0]<<",";
-  }
-  cout<<"\n";
 }
