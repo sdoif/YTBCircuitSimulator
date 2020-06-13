@@ -1,0 +1,68 @@
+The following document describes the format for netlist files which are used to represent the 
+circuit to be simulated.
+
+*Components*
+The netlist is described by lines defining the type, designator (name), nodes and value of each
+component
+Designator  Component       Node order  Value
+V           Voltage source  +, -        Volts or function
+I           Current source  In, out     Amps or function
+R           Resistor        N/A         Ohms
+C           Capacitor       N/A         Farads
+L           Inductor        N/A         Henries
+
+The format of each line is:
+<designator> <node0> <node1> <value>
+
+Designator
+The designator field contains a letter and a number. The letter specifies the type of component (see above) 
+and the number is added to make a unique identifier for each component
+
+Node list
+A list of two node names occurs after the designator. Node names have the format NXXX, where X is an int.
+The component is connected to these nodes, in the order given in the table above. The reference
+(ground) node is named 0
+
+Value
+The value is the component value in the units given in the table above. Numbers can be followed by
+a multiplier:
+Multiplier Value
+p ×10-12
+n ×10-9
+u ×10-6
+m ×10-3
+k ×103
+Meg ×106
+G ×109
+
+Voltage and current sources can have a DC value, or a function. The only function with support is a
+sinusoid written in the form:
+SINE(<dc offset> <amplitude> <frequency>)
+DC offset and amplitude have units of Volts or Amps. Frequency has units of Hertz.
+
+*Simulation settings*
+The transient simulation is described with a line of the form:
+.tran 0 <stop time> 0 <timestep>
+Stop time is the duration of the simulation. Timestep is the resolution of the simulation. 0 fields are
+included to maintain compatibility with SPICE.
+
+*End of file*
+The file ends with the line:
+.end
+
+*Comments*
+The input file may contain comments on lines beginning with *
+These lines will be ignored.
+Extensions to the specification
+
+*Example*
+* A test circuit to demonstrate SPICE syntax
+V1 N003 0 SINE(2 1 1000)
+R1 N001 N003 1k
+C1 N001 0 1µ
+I1 0 N004 0.1
+R1 N004 N002 2k
+L1 N002 N001 1m
+R2 N002 N001 1Meg
+.tran 0 10ms 0 1us
+.end
