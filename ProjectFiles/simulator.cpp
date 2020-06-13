@@ -114,7 +114,6 @@ int main()
     i_l = VectorXd::Zero(node_max);
   }
 
-  if(node_max<17){
   //Intialisation
   if(0){
   for(int l=0; l<input.size(); l++){
@@ -228,7 +227,7 @@ int main()
             }
           }
         }
-    }
+      }
 
     //Current source processing
     if(line[0].find('I')==0){
@@ -249,7 +248,7 @@ int main()
   }
   }
 
-  if(node_max>16){
+  if(1){
     //Intialisation
     for(int l=0; l<input.size(); l++){
       vector<string> line = input[l];
@@ -535,7 +534,7 @@ int main()
       cout<<"\n";
     }
   }
-  if(node_max>16){
+  if(1){
     for(double t=0.0; t<=stopTime; t+=timeStep){
       cout<<t<<",";
       v_l = con_l.partialPivLu().solve(i_l);
