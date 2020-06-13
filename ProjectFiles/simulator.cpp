@@ -114,6 +114,7 @@ int main()
     i_l = VectorXd::Zero(node_max);
   }
 
+  if(node_max<17){
   //Intialisation
   if(0){
   for(int l=0; l<input.size(); l++){
@@ -196,7 +197,7 @@ int main()
           //Copying values from first row into second row and overwrite first row
           for(int x=0; x<con_s.cols(); x++){
             if(con_s(stoi(line[2])-1)!=0){
-            con_s(stoi(line[1])-1, x) = con_s(stoi(line[2])-1, x);
+            con_s(stoi(line[1])-1, x) += con_s(stoi(line[2])-1, x);
             con_s(stoi(line[2])-1, x) = 0;
             con_s(stoi(line[1])-1, stoi(line[1])-1) += abs(con_s(stoi(line[1])-1, x));
             }
@@ -204,7 +205,7 @@ int main()
           //find total conductance connected positive end of supernode
           for(int y=0; y<con_s.cols(); y++){
             if(y < stoi(line[1])-1){
-              sc -= con_s(stoi(line[1])-1, y);
+              sc += con_s(stoi(line[1])-1, y);
             }
           }
           //Current vector value equal to value of source multiplied by conductance at positive terminal
@@ -246,124 +247,140 @@ int main()
       }
     }
   }
-}
+  }
 
-if(1){
-  for(int l=0; l<input.size(); l++){
-    vector<string> line = input[l];
-
-    //Resistor processing
-    if(line[0].find('R')==0){
-      double r_con = 1/(ctod(line[3]));
-      //Adding to total conductances indicies
-      if(stoi(line[1])!=0){
-        con_l(stoi(line[1])-1, stoi(line[1])-1) += r_con;
-      }
-      //Allocate respective index in matrix
-      if((stoi(line[1])!=0)&&(stoi(line[2])!=0)){
-        con_l(stoi(line[1])-1, stoi(line[2])-1) -= r_con;
-      }
-    }
-
-    //Capacitor processing
-    if(line[0].find('C')==0){
-      //Add charge value to map
-      charges[line[0]] = 0;
-      //Check if connected to reference node
-      if(stoi(line[2]) == 0){
-        //loop to make all indexes in row=0
-        for(int x=0; x<con_l.cols(); x++){
-          con_l(stoi(line[1])-1, x) = 0;
+  if(node_max>16){
+    //Intialisation
+    for(int l=0; l<input.size(); l++){
+      vector<string> line = input[l];
+      //Resistor processing
+      if(line[0].find('R')==0){
+        double r_con = 1/(ctod(line[3]));
+        //Adding to total conductances indicies
+        if(stoi(line[1])!=0){
+          con_l(stoi(line[1])-1, stoi(line[1])-1) += r_con;
         }
-        //Inserting 1 into respective node
-        con_l(stoi(line[1])-1, stoi(line[1])-1) = 1;
+        //Allocate respective index in matrix
+        if((stoi(line[1])!=0)&&(stoi(line[2])!=0)){
+          con_l(stoi(line[1])-1, stoi(line[2])-1) -= r_con;
+        }
       }
-      //All other cases when it is connected to 2 non-reference nodes
-      else{
-        //Check for second time voltage source appears
-        if(stoi(line[1]) > stoi(line[2])){
-          //Copying values from first row into second row and overwrite first row
+
+      //Capacitor processing
+      if(line[0].find('C')==0){
+        //Add charge value to map
+        charges[line[0]] = 0;
+        //Check if connected to reference node
+        if(stoi(line[2]) == 0){
+          //loop to make all indexes in row=0
           for(int x=0; x<con_l.cols(); x++){
-            con_l(stoi(line[1])-1, x) = con_l(stoi(line[2])-1, x);
-            con_l(stoi(line[2])-1, x) = 0;
+            con_l(stoi(line[1])-1, x) = 0;
           }
-          //Move current vector value from first row into second row as well
-          i_l(stoi(line[1])-1) = i_l(stoi(line[2])-1);
-          //Making of supernode means 0 conductance between nodes
-          con_l(stoi(line[1])-1, stoi(line[2])-1) = 0;
-          //Add in 1 and -1 to first row to represent voltage source
-          con_l(stoi(line[2])-1, stoi(line[2])-1) = 1;
-          con_l(stoi(line[2])-1, stoi(line[1])-1) = -1;
-        }
-      }
-    }
-
-    //Voltage processing
-    if(line[0].find('V')==0){
-      //Check if connected to reference node
-      if(stoi(line[2]) == 0){
-        //loop to make all indexes in row=0
-        for(int x=0; x<con_l.cols(); x++){
-          con_l(stoi(line[1])-1, x) = 0;
-        }
-        //Inserting 1 into respective node
+          //Inserting 1 into respective node
           con_l(stoi(line[1])-1, stoi(line[1])-1) = 1;
-          //Insert value of source into current vector if DC source
-          if(line[3]!="SINE"){
-            i_l(stoi(line[1])-1) = ctod(line[3]);
+        }
+        //All other cases when it is connected to 2 non-reference nodes
+        else{
+          //Check for second time voltage source appears
+          if(stoi(line[1]) > stoi(line[2])){
+            //Copying values from first row into second row and overwrite first row
+            for(int x=0; x<con_l.cols(); x++){
+              if(con_l(stoi(line[2])-1)!=0){
+                con_l(stoi(line[1])-1, x) = con_l(stoi(line[2])-1, x);
+                con_l(stoi(line[2])-1, x) = 0;
+                con_l(stoi(line[1])-1, stoi(line[1])-1) += abs(con_l(stoi(line[1])-1, x));
+              }
+            }
+
+            //Making of supernode means 0 conductance between nodes
+            con_l(stoi(line[1])-1, stoi(line[2])-1) = 0;
+            //Add in 1 and -1 to first row to represent voltage source
+            con_l(stoi(line[2])-1, stoi(line[2])-1) = 1;
+            con_l(stoi(line[2])-1, stoi(line[1])-1) = -1;
+            //Move current vector value from first row into second row if current source present
+            i_l(stoi(line[1])-1) += i_l(stoi(line[2])-1);
           }
-          //Initialise current vector for sine source at DC offset
-          else{
-            i_l(stoi(line[1])-1) = ctod(line[4]);
-          }
+        }
       }
-      //All other cases when it is connected to 2 non-reference nodes
-      else{
-        //Check for second time voltage source appears
-        if(stoi(line[1]) > stoi(line[2])){
-          //Copying values from first row into second row and overwrite first row
+
+      //Voltage processing
+      if(line[0].find('V')==0){
+        //Check if connected to reference node
+        if(stoi(line[2]) == 0){
+          //loop to make all indexes in row=0
           for(int x=0; x<con_l.cols(); x++){
-            con_l(stoi(line[1])-1, x) = con_l(stoi(line[2])-1, x);
-            con_l(stoi(line[2])-1, x) = 0;
+            con_l(stoi(line[1])-1, x) = 0;
           }
-          //Move current vector value from first row into second row as well
-          i_l(stoi(line[1])-1) = i_l(stoi(line[2])-1);
-          //Making of supernode means 0 conductance between nodes
-          con_l(stoi(line[1])-1, stoi(line[2])-1) = 0;
-          //Add in 1 and -1 to first row to represent voltage source
-          con_l(stoi(line[2])-1, stoi(line[2])-1) = 1;
-          con_l(stoi(line[2])-1, stoi(line[1])-1) = -1;
-          //Place value of source into current vector
-          //Check for if DC source
-          if(line[3]!="SINE"){
-            i_l(stoi(line[2])-1) = ctod(line[3])*(-1);
-          }
-          //Initialise current vector for sine source at DC offset
+          //Inserting 1 into respective node
+            con_l(stoi(line[1])-1, stoi(line[1])-1) = 1;
+            //Insert value of source into current vector if DC source
+            if(line[3]!="SINE"){
+              i_l(stoi(line[1])-1) = ctod(line[3]);
+            }
+            //Initialise current vector for sine source at DC offset
             else{
-              i_l(stoi(line[2])-1) = ((-1)*ctod(line[4]));
+              i_l(stoi(line[1])-1) = ctod(line[4]);
+            }
+        }
+        //All other cases when it is connected to 2 non-reference nodes
+        else{
+          //Check for second time voltage source appears
+          double sc = 0;
+          if(stoi(line[1]) > stoi(line[2])){
+            //Copying values from first row into second row and overwrite first row
+            for(int x=0; x<con_l.cols(); x++){
+              if(con_l(stoi(line[2])-1)!=0){
+              con_l(stoi(line[1])-1, x) += con_l(stoi(line[2])-1, x);
+              con_l(stoi(line[2])-1, x) = 0;
+              con_l(stoi(line[1])-1, stoi(line[1])-1) += abs(con_l(stoi(line[1])-1, x));
+              }
+            }
+            //find total conductance connected positive end of supernode
+            for(int y=0; y<con_l.cols(); y++){
+              if(y < stoi(line[1])-1){
+                sc += con_l(stoi(line[1])-1, y);
+              }
+            }
+            //Current vector value equal to value of source multiplied by conductance at positive terminal
+            i_l(stoi(line[1])-1) = ctod(line[3])*sc;
+            //Move current vector value from first row into second row if current source present
+            i_l(stoi(line[1])-1) += i_l(stoi(line[2])-1);
+            //Making of supernode means 0 conductance between nodes
+            con_l(stoi(line[1])-1, stoi(line[2])-1) = 0;
+            //Add in 1 and -1 to first row to represent voltage source
+            con_l(stoi(line[2])-1, stoi(line[2])-1) = 1;
+            con_l(stoi(line[2])-1, stoi(line[1])-1) = -1;
+            //Place value of source into current vector
+            //Check for if DC source
+            if(line[3]!="SINE"){
+              i_l(stoi(line[2])-1) = ctod(line[3])*(-1);
+            }
+            //Initialise current vector for sine source at DC offset
+              else{
+                i_l(stoi(line[2])-1) = ((-1)*ctod(line[4]));
+              }
             }
           }
-        }
-    }
+      }
 
-    //Current source processing
-    if(line[0].find('I')==0){
-      int node = stoi(line[1]);
-      //cout<<node<<endl;
-      //If a current source is found, the value of its current will be added to respective node
-        if(node!=0){
-        //  cout<<"here if"<<endl;
-          //If sinusoidal then at t=0, only DC offset value
-          if(line[3]=="SINE"){
-            i_l((node-1), 0) += ctod(line[4]);
-          }else{
-            i_l((node-1), 0) += ctod(line[3]);
-        //    cout<<"here else"<<endl;
-          }
+      //Current source processing
+      if(line[0].find('I')==0){
+        int node = stoi(line[1]);
+        //cout<<node<<endl;
+        //If a current source is found, the value of its current will be added to respective node
+          if(node!=0){
+          //  cout<<"here if"<<endl;
+            //If sinusoidal then at t=0, only DC offset value
+            if(line[3]=="SINE"){
+              i_l((node-1), 0) += ctod(line[4]);
+            }else{
+              i_l((node-1), 0) += ctod(line[3]);
+          //    cout<<"here else"<<endl;
+            }
+        }
       }
     }
   }
-}
 
   //Remove duplicate lines, keeping smallest node first (except ref node)
   input.erase(remove_if(input.begin(), input.end(), [](vector<string> a){return (a[1]>a[2] && a[2]!="0");}), input.end());
@@ -409,6 +426,7 @@ if(1){
         }else{
             l_pd = (v_s((l_node2-1),0))-(v_s((l_node1-1),0));
         }
+        cout<<"PD across inductor = "<<l_pd<<endl;
         //Finding di, the change in current and the inductors contribution to that node's current
         double di_l = (l_pd*timeStep)/induct_val;
         if(l_node2!=0){
@@ -425,13 +443,17 @@ if(1){
           if(line[3]=="SINE"){
             int node2 = stoi(line[2]);
             int node1 = stoi(line[1]);
-            cout<<(ctod(line[4])+(ctod(line[5])*sin(ctod(line[6])*t)))<<",";
+            cout<<(ctod(line[4])+(ctod(line[5])*sin(2*M_PI*ctod(line[6])*t)))<<",";
             //If a current source is found, the value of its current will be added to respective node
             if(t!=0){
+              //Initialise variable delta_i which calculates the increase or decrease in current from the previous instance to current one
+              //it will then increment
+              double delta_i = (ctod(line[5])*sin(2*M_PI*(t)*ctod(line[6])))-(ctod(line[5])*sin(2*M_PI*(t-timeStep)*ctod(line[6])));
               if(node2 != 0){
-                i_s((node2 -1),0)+= (ctod(line[5])*sin((t)*ctod(line[6])))-(ctod(line[5])*sin((t-timeStep)*ctod(line[6])));
+                i_s((node2 -1),0)+= delta_i;
+              }else if(node1 != 0){
+              i_s((node1 -1),0)-= delta_i;
               }
-              i_s((node1 -1),0)-= (ctod(line[5])*sin((t)*ctod(line[6])))-(ctod(line[5])*sin((t-timeStep)*ctod(line[6])));
             }
           }else{
             cout<<ctod(line[3])<<",";
@@ -513,105 +535,142 @@ if(1){
       cout<<"\n";
     }
   }
-  if(1){
+  if(node_max>16){
     for(double t=0.0; t<=stopTime; t+=timeStep){
-        cout<<t<<",";
-        v_l = con_l.colPivHouseholderQr().solve(i_l);
-        for(int l=0; l<v_l.size(); l++){
-          cout<<v_l(l)<<",";
-        }
-        //Cycle  through elements to find ones that need to be updated every cycle
-        for(int y=0; y<input.size(); y++){
-          vector<string> line = input[y];
-          //Inductor processing
-          if(line[0].find('L')==0){
-            cout<<induct_i[line[0]]<<",";
-            //Initialising variables for node numbers, inductance and PD across inductor
-            int l_node1 = stoi(line[1]);
-            int l_node2 = stoi(line[2]);
-            double induct_val = ctod(line[3]);
-            double l_pd;
-            //Finding l_pd, the PD across inductor
-            if(l_node1 == 0){
-              l_pd = v_l((l_node2-1),0);
-          }else if(l_node2 == 0){
-              l_pd = -(v_l((l_node1-1),0));
-          }else{
-              l_pd = (v_l((l_node2-1),0))-(v_l((l_node1-1),0));
-          }
-          //Finding di, the change in current and the inductors contribution to that node's current
-          double di_l = (l_pd*timeStep)/induct_val;
-          if(l_node2!=0){
-            i_l((l_node2 - 1), 0) += di_l;
-          }else if(l_node1!=0){
-            i_l((l_node1 -1), 0) -= di_l;
-          }
-          //Find add di to current going through inductor
-          induct_i[line[0]]+=di_l;
-          }
-
-          //Current source processing
-          if(line[0].find('I')==0){
-            if(line[3]=="SINE"){
-              int node2 = stoi(line[2]);
-              int node1 = stoi(line[1]);
-              cout<<(ctod(line[4])+(ctod(line[5])*sin(ctod(line[6])*t)))<<",";
-              //If a current source is found, the value of its current will be added to respective node
-              if(t!=0){
-                if(node2 != 0){
-                  i_l((node2 -1),0)+= (ctod(line[5])*sin((t)*ctod(line[6])))-(ctod(line[5])*sin((t-timeStep)*ctod(line[6])));
-                }
-                i_l((node1 -1),0)-= (ctod(line[5])*sin((t)*ctod(line[6])))-(ctod(line[5])*sin((t-timeStep)*ctod(line[6])));
-              }
-            }else{
-              cout<<ctod(line[3])<<",";
-            }
-          }
-
-          //Capacitor processing
-          if(line[0].find('C')==0){
-            //Check for reference node
-            if(stoi(line[2])==0){
-              //Find difference in voltage nodes (in this case value of one node) and multiply by capacitance to get charges
-              double cc = (v_l(stoi(line[1])-1)*ctod(line[3]));
-              cout<<cc/timeStep<<",";
-              charges[line[0]] += cc;
-              //Divide total charge by capacitance to update current vector value
-              i_l(stoi(line[1])-1) = charges[line[0]]/timeStep;
-              }
-            else{
-              //Find difference in voltage nodes and multiply by capacitance to get charges
-              double cc = (v_l(stoi(line[1])-1) - v_l(stoi(line[2])-1))*ctod(line[3]);
-              cout<<cc/timeStep<<",";
-              charges[line[0]] += cc;
-              //Divide total charge by capacitance to update current vector value
-              i_l(stoi(line[1])-1) = charges[line[0]]/timeStep;
-              }
-            }
-
-          //Voltage source processing
-          if(line[0].find('V')==0){
-            cout<<0<<",";
-            if(line[3]=="SINE"){
-              i_l(stoi(line[1])-1) = ctod(line[4])+(ctod(line[5])*sin(2*M_PI*t*ctod(line[6])));
-              }
-            }
-
-          //Resistor processing
-          if(line[0].find('R')==0){
-            if(line[2]=="0"){
-              double current = v_l(stoi(line[1])-1)/ctod(line[3]);
-              cout<<current<<",";
-            }else{
-              double current = (v_l(stoi(line[1])-1) - v_l(stoi(line[2])-1))/ctod(line[3]);
-              cout<<current<<",";
-            }
-          }
-        }
-        cout<<"\n";
+      cout<<t<<",";
+      v_l = con_l.partialPivLu().solve(i_l);
+      for(int l=0; l<v_l.size(); l++){
+        cout<<v_l(l)<<",";
       }
+      //Cycle  through elements to find ones that need to be updated every cycle
+      for(int y=0; y<input.size(); y++){
+        vector<string> line = input[y];
+        //Inductor processing
+        if(line[0].find('L')==0){
+          cout<<induct_i[line[0]]<<",";
+          //Initialising variables for node numbers, inductance and PD across inductor
+          int l_node1 = stoi(line[1]);
+          int l_node2 = stoi(line[2]);
+          double induct_val = ctod(line[3]);
+          double l_pd;
+          //Finding l_pd, the PD across inductor
+          if(l_node1 == 0){
+            l_pd = v_l((l_node2-1),0);
+        }else if(l_node2 == 0){
+            l_pd = -(v_l((l_node1-1),0));
+        }else{
+            l_pd = (v_l((l_node2-1),0))-(v_l((l_node1-1),0));
+        }
+        cout<<"PD across inductor = "<<l_pd<<endl;
+        //Finding di, the change in current and the inductors contribution to that node's current
+        double di_l = (l_pd*timeStep)/induct_val;
+        if(l_node2!=0){
+          i_l((l_node2 - 1), 0) += di_l;
+        }else if(l_node1!=0){
+          i_l((l_node1 -1), 0) -= di_l;
+        }
+        //Find add di to current going through inductor
+        induct_i[line[0]]+=di_l;
+        }
+
+        //Current source processing
+        if(line[0].find('I')==0){
+          if(line[3]=="SINE"){
+            int node2 = stoi(line[2]);
+            int node1 = stoi(line[1]);
+            cout<<(ctod(line[4])+(ctod(line[5])*sin(2*M_PI*ctod(line[6])*t)))<<",";
+            //If a current source is found, the value of its current will be added to respective node
+            if(t!=0){
+              //Initialise variable delta_i which calculates the increase or decrease in current from the previous instance to current one
+              //it will then increment
+              double delta_i = (ctod(line[5])*sin(2*M_PI*(t)*ctod(line[6])))-(ctod(line[5])*sin(2*M_PI*(t-timeStep)*ctod(line[6])));
+              if(node2 != 0){
+                i_l((node2 -1),0)+= delta_i;
+              }else if(node1 != 0){
+              i_l((node1 -1),0)-= delta_i;
+              }
+            }
+          }else{
+            cout<<ctod(line[3])<<",";
+          }
+        }
+
+        //Capacitor processing
+        if(line[0].find('C')==0){
+          //Check for reference node
+          double total = 0;
+          if(stoi(line[2])==0){
+            //multiply all conductances going into capacitor node by voltage difference of nodes to get total current into node
+            for(int y=0; y<con_l.cols(); y++){
+              if(y != stoi(line[1])-1){
+                double i = (con_l(y, stoi(line[1])-1))*(v_l(stoi(line[1])-1)-v_l(y));
+                //sum of currents
+                total += i;
+              }
+            }
+
+            //output current into capacitor
+            cout<<total<<",";
+            //multiply current by timestep to get additional charge stored on capacitor
+            charges[line[0]] += (total*timeStep);
+            //Divide total charge by capacitance to update current vector value for voltage provided by capacitor
+            i_l(stoi(line[1])-1) = charges[line[0]]/ctod(line[3]);
+            }
+          else{
+            //Find difference in voltage nodes and multiply by capacitance to get charges
+            double sc = 0;
+            for(int y=0; y<con_l.cols(); y++){
+              if(y < stoi(line[1])-1){
+                double i = (y, con_l(stoi(line[2])-1))*(v_l(stoi(line[1])-1)-v_l(y));
+                //sum of currents
+                total += i;
+              }
+            }
+            for(int y=0; y<con_l.cols(); y++){
+              if(y > stoi(line[2])-1){
+                double i = (y, con_l(stoi(line[2])-1))*(v_l(stoi(line[2])-1)-v_l(y));
+                //sum of currents
+                total -= i;
+              }
+            }
+            cout<<total<<",";
+            charges[line[0]] += (total*timeStep);
+            //Divide total charge by capacitance to update current vector value
+            i_l(stoi(line[1])-1) = charges[line[0]]/ctod(line[3]);
+            //find total conductance connected positive end of supernode
+            for(int y=0; y<con_l.cols(); y++){
+              if(y < stoi(line[1])-1){
+                sc -= con_l(stoi(line[1])-1, y);
+              }
+            }
+            //Current vector value equal to value of voltage multiplied by conductance at positive terminal
+            i_l(stoi(line[2])-1) = i_l(stoi(line[2])-1)*sc;
+            }
+          }
+
+        //Voltage source processing
+        if(line[0].find('V')==0){
+          cout<<0<<",";
+          if(line[3]=="SINE"){
+            i_l(stoi(line[1])-1) = ctod(line[4])+(ctod(line[5])*sin(2*M_PI*t*ctod(line[6])));
+            }
+          }
+
+        //Resistor processing
+        if(line[0].find('R')==0){
+          if(line[2]=="0"){
+            double current = v_l(stoi(line[1])-1)/ctod(line[3]);
+            cout<<current<<",";
+          }else{
+            double current = (v_l(stoi(line[1])-1) - v_l(stoi(line[2])-1))/ctod(line[3]);
+            cout<<current<<",";
+          }
+        }
+      }
+      cout<<"\n";
     }
   }
+}
 
 bool component(char a, char b)
 {
