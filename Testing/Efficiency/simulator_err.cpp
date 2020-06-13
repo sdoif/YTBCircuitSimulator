@@ -360,7 +360,7 @@ if(node_max>16){
 
   if(node_max<17){
   for(double t=0.0; t<=stopTime; t+=timeStep){
-      v_s = con_s.colPivHouseholderQr().solve(i_s);
+      v_s = con_s.partialPivLu().solve(i_s);
       //Cycle  through elements to find ones that need to be updated every cycle
       double err = (con_s*v_s - i_s).norm() / i_s.norm();
       rel_error += err;
@@ -449,7 +449,7 @@ if(node_max>16){
   if(node_max>16){
     for(double t=0.0; t<=stopTime; t+=timeStep){
         cout<<t<<",";
-        v_l = con_l.colPivHouseholderQr().solve(i_l);
+        v_l = con_l.partialPivLu().solve(i_l);
         for(int l=0; l<v_l.size(); l++){
           cout<<v_l(l)<<",";
         }
