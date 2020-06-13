@@ -262,10 +262,10 @@ int main()
     cout<<(input[l])[0]<<",";
   }
   cout<<"\n";
-  for(double t=0.0; t<=stopTime; t+=timeStep){
-    if(node_max<17){
+  if(node_max<17){
+    for(double t=0.0; t<=stopTime; t+=timeStep){
       cout<<t<<",";
-      v_s = con_s.colPivHouseholderQr().solve(i_s);
+      v_s = con_s.partialPivLu().solve(i_s);
       for(int l=0; l<v_s.size(); l++){
         cout<<v_s(l)<<",";
       }
@@ -389,12 +389,13 @@ int main()
           }
         }
       }
+      cout<<"\n";
     }
-    if(node_max>16){
+  }
+  if(node_max>16){
+    //TO-DO, COPY FINISHED CODE
       v_l = con_l.partialPivLu().solve(i_l);
     }
-    cout<<"\n";
-  }
 }
 
 bool component(char a, char b)
