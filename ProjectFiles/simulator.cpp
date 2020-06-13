@@ -315,11 +315,12 @@ int main()
                 total += i;
               }
             }
+
             //output current into capacitor
             cout<<total<<",";
             //multiply current by timestep to get additional charge stored on capacitor
             charges[line[0]] += (total*timeStep);
-            //Divide total charge by capacitance to update current vector value
+            //Divide total charge by capacitance to update current vector value for voltage provided by capacitor
             i_s(stoi(line[1])-1) = charges[line[0]]/ctod(line[3]);
             }
           else{
