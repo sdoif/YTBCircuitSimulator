@@ -188,8 +188,11 @@ int main()
         if(stoi(line[1]) > stoi(line[2])){
           //Copying values from first row into second row and overwrite first row
           for(int x=0; x<con_s.cols(); x++){
+            if(con_s(stoi(line[2])-1)!=0){
             con_s(stoi(line[1])-1, x) = con_s(stoi(line[2])-1, x);
             con_s(stoi(line[2])-1, x) = 0;
+            con_s(stoi(line[1])-1, stoi(line[1])-1) += abs(con_s(stoi(line[1])-1, x));
+            }
           }
           //Move current vector value from first row into second row as well
           i_s(stoi(line[1])-1) = i_s(stoi(line[2])-1);
@@ -302,21 +305,44 @@ int main()
         //Capacitor processing
         if(line[0].find('C')==0){
           //Check for reference node
+          double total = 0;
           if(stoi(line[2])==0){
-            //Find difference in voltage nodes (in this case value of one node) and multiply by capacitance to get charges
-            double cc = (v_s(stoi(line[1])-1)*ctod(line[3]));
-            cout<<cc/timeStep<<",";
-            charges[line[0]] += cc;
+            //multiply all conductances going into capacitor node by voltage difference of nodes to get total current into node
+            for(int y=0; y<con_s.cols(); y++){
+              if(y != stoi(line[1])-1){
+                double i = (con_s(y, stoi(line[1])-1))*(v_s(stoi(line[1])-1)-v_s(y));
+                //sum of currents
+                total += i;
+              }
+            }
+            //output current into capacitor
+            cout<<total<<",";
+            //multiply current by timestep to get additional charge stored on capacitor
+            charges[line[0]] += (total*timeStep);
             //Divide total charge by capacitance to update current vector value
-            i_s(stoi(line[1])-1) = charges[line[0]]/timeStep;
+            i_s(stoi(line[1])-1) = charges[line[0]]/ctod(line[3]);
             }
           else{
             //Find difference in voltage nodes and multiply by capacitance to get charges
-            double cc = (v_s(stoi(line[1])-1) - v_s(stoi(line[2])-1))*ctod(line[3]);
-            cout<<cc/timeStep<<",";
-            charges[line[0]] += cc;
+            //double cc = (v_s(stoi(line[1])-1) - v_s(stoi(line[2])-1))*ctod(line[3]);
+            for(int y=0; y<con_s.cols(); y++){
+              if(y != stoi(line[1])-1){
+                double i = (con_s(y, stoi(line[1])-1))*(v_s(stoi(line[1])-1)-v_s(y));
+                //sum of currents
+                total += i;
+              }
+            }
+            for(int y=0; y<con_s.cols(); y++){
+              if(y != stoi(line[1])-1){
+                double i = (con_s(y, stoi(line[2])-1))*(v_s(stoi(line[2])-1)-v_s(y));
+                //sum of currents
+                total -= i;
+              }
+            }
+            cout<<total<<",";
+            charges[line[0]] += (total*timeStep);
             //Divide total charge by capacitance to update current vector value
-            i_s(stoi(line[1])-1) = charges[line[0]]/timeStep;
+            i_s(stoi(line[1])-1) = charges[line[0]]/ctod(line[3]);
             }
           }
 
