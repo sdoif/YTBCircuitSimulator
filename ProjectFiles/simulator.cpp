@@ -90,32 +90,32 @@ int main()
 
   //Creating appropriate matrices / vectors
   Matrix<double, Dynamic, Dynamic, 0, 16, 16> con_s;
-  if(node_max<17){
+  if(0){
     con_s = MatrixXd::Zero(node_max, node_max);
   }
   Matrix<double, Dynamic, Dynamic, 0, 16, 1> i_s;
-  if(node_max<17){
+  if(0){
     i_s = VectorXd::Zero(node_max);
   }
   Matrix<double, Dynamic, Dynamic, 0, 16, 1> v_s;
-  if(node_max<17){
+  if(0){
     v_s = VectorXd::Zero(node_max);
   }
   MatrixXd con_l;
-  if(node_max>16){
+  if(1){
     con_l = MatrixXd::Zero(node_max,node_max);
   }
   VectorXd v_l;
-  if(node_max>16){
+  if(1){
     v_l = VectorXd::Zero(node_max);
   }
   VectorXd i_l;
-  if(node_max>16){
+  if(1){
     i_l = VectorXd::Zero(node_max);
   }
 
   //Intialisation
-  if(node_max<17){
+  if(0){
   for(int l=0; l<input.size(); l++){
     vector<string> line = input[l];
 
@@ -232,7 +232,7 @@ int main()
   }
 }
 
-if(node_max>16){
+if(1){
   for(int l=0; l<input.size(); l++){
     vector<string> line = input[l];
 
@@ -365,7 +365,7 @@ if(node_max>16){
   }
   cout<<"\n";
 
-  if(node_max<17){
+  if(0){
   for(double t=0.0; t<=stopTime; t+=timeStep){
       cout<<t<<",";
       v_s = con_s.colPivHouseholderQr().solve(i_s);
@@ -463,7 +463,7 @@ if(node_max>16){
       cout<<"\n";
     }
   }
-  if(node_max>16){
+  if(1){
     for(double t=0.0; t<=stopTime; t+=timeStep){
         cout<<t<<",";
         v_l = con_l.partialPivLu().solve(i_l);
