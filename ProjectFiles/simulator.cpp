@@ -562,7 +562,6 @@ if(node_max>16){
       cout<<"\n";
     }
   }
-}
 
 bool component(char a, char b)
 {
