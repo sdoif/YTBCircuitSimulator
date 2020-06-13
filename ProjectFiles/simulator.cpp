@@ -460,8 +460,8 @@ if(node_max>16){
           }
         }
       }
+      cout<<"\n";
     }
-    cout<<"\n";
   }
   if(node_max>16){
     for(double t=0.0; t<=stopTime; t+=timeStep){
@@ -558,8 +558,8 @@ if(node_max>16){
             }
           }
         }
+        cout<<"\n";
       }
-      cout<<"\n";
     }
   }
 

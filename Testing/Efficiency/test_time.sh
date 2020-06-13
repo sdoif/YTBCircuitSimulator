@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+bash simulator_compile.sh
+
 g++ test_generator.cpp -o test_generator
 ./test_generator
 
