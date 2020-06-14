@@ -150,10 +150,8 @@ int main()
         if(stoi(line[1]) > stoi(line[2])){
           //Copying values from first row into second row and overwrite first row
           for(int x=0; x<con_s.cols(); x++){
-            if(con_s(stoi(line[2])-1)!=0){
-              con_s(stoi(line[1])-1, x) = con_s(stoi(line[2])-1, x);
-              con_s(stoi(line[2])-1, x) = 0;
-              con_s(stoi(line[1])-1, stoi(line[2])-1) += abs(con_s(stoi(line[1])-1, x));
+            con_s(stoi(line[1])-1, x) += con_s(stoi(line[2])-1, x);
+            con_s(stoi(line[2])-1, x) = 0;
             }
           }
 
@@ -166,7 +164,7 @@ int main()
           i_s(stoi(line[1])-1) += i_s(stoi(line[2])-1);
         }
       }
-    }
+
 
     //Voltage processing
     if(line[0].find('V')==0){
@@ -466,7 +464,6 @@ int main()
             }
           else{
             //Find difference in voltage nodes and multiply by capacitance to get charges
-            double sc = 0;
             for(int y=0; y<con_s.cols(); y++){
               if(y < stoi(line[1])-1){
                 double i = (y, con_s(stoi(line[2])-1))*(v_s(stoi(line[1])-1)-v_s(y));
@@ -486,13 +483,7 @@ int main()
             //Divide total charge by capacitance to update current vector value
             i_s(stoi(line[1])-1) = charges[line[0]]/ctod(line[3]);
             //find total conductance connected positive end of supernode
-            for(int y=0; y<con_s.cols(); y++){
-              if(y < stoi(line[1])-1){
-                sc -= con_s(stoi(line[1])-1, y);
-              }
-            }
-            //Current vector value equal to value of voltage multiplied by conductance at positive terminal
-            i_s(stoi(line[2])-1) = i_s(stoi(line[2])-1)*sc;
+
             }
           }
 
