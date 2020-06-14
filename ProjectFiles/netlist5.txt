@@ -1,0 +1,4 @@
+I1 0 N001 4mA
+R1 N001 0 60k
+.tran 0 5ms 0 0.1ms
+.end

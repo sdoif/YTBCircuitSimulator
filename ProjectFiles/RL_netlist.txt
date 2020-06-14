@@ -1,0 +1,5 @@
+R1 N001 N002 20
+L1 N002 0 1m
+V2 N001 0 SINE(2 5 1k)
+.tran 0 5ms 0 1us
+.end

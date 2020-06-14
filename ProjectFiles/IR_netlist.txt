@@ -1,0 +1,4 @@
+R1 N001 0 20
+I1 N001 0 SINE(2 5 1k)
+.tran 0 5ms 0 1us
+.end

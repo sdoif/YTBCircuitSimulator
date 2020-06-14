@@ -13,6 +13,7 @@ double ctod(string v);
 
 int main()
 {
+  //Maps for processing
   map<string, double> charges;
   map<string, double> induct_i;
   //Netlist management
@@ -151,13 +152,10 @@ int main()
         if(stoi(line[1]) > stoi(line[2])){
           //Copying values from first row into second row and overwrite first row
           for(int x=0; x<con_s.cols(); x++){
-            if(con_s(stoi(line[2])-1)!=0){
-              con_s(stoi(line[1])-1, x) = con_s(stoi(line[2])-1, x);
-              con_s(stoi(line[2])-1, x) = 0;
-              con_s(stoi(line[1])-1, stoi(line[1])-1) += abs(con_s(stoi(line[1])-1, x));
+            con_s(stoi(line[1])-1, x) += con_s(stoi(line[2])-1, x);
+            con_s(stoi(line[2])-1, x) = 0;
             }
           }
-
           //Making of supernode means 0 conductance between nodes
           con_s(stoi(line[1])-1, stoi(line[2])-1) = 0;
           //Add in 1 and -1 to first row to represent voltage source
@@ -167,7 +165,6 @@ int main()
           i_s(stoi(line[1])-1) += i_s(stoi(line[2])-1);
         }
       }
-    }
 
     //Voltage processing
     if(line[0].find('V')==0){
@@ -191,28 +188,14 @@ int main()
       //All other cases when it is connected to 2 non-reference nodes
       else{
         //Check for second time voltage source appears
-        double sc = 0;
         if(stoi(line[1]) > stoi(line[2])){
           //Copying values from first row into second row and overwrite first row
           for(int x=0; x<con_s.cols(); x++){
-            if(con_s(stoi(line[2])-1)!=0){
             con_s(stoi(line[1])-1, x) += con_s(stoi(line[2])-1, x);
             con_s(stoi(line[2])-1, x) = 0;
-            con_s(stoi(line[1])-1, stoi(line[1])-1) += abs(con_s(stoi(line[1])-1, x));
-            }
           }
-          //find total conductance connected positive end of supernode
-          for(int y=0; y<con_s.cols(); y++){
-            if(y < stoi(line[1])-1){
-              sc += con_s(stoi(line[1])-1, y);
-            }
-          }
-          //Current vector value equal to value of source multiplied by conductance at positive terminal
-          i_s(stoi(line[1])-1) = ctod(line[3])*sc;
           //Move current vector value from first row into second row if current source present
           i_s(stoi(line[1])-1) += i_s(stoi(line[2])-1);
-          //Making of supernode means 0 conductance between nodes
-          con_s(stoi(line[1])-1, stoi(line[2])-1) = 0;
           //Add in 1 and -1 to first row to represent voltage source
           con_s(stoi(line[2])-1, stoi(line[2])-1) = 1;
           con_s(stoi(line[2])-1, stoi(line[1])-1) = -1;
@@ -234,7 +217,7 @@ int main()
       int node = stoi(line[1]);
       //cout<<node<<endl;
       //If a current source is found, the value of its current will be added to respective node
-        if(node!=0){
+        !=0){
         //  cout<<"here if"<<endl;
           //If sinusoidal then at t=0, only DC offset value
           if(line[3]=="SINE"){
@@ -252,6 +235,7 @@ int main()
     //Intialisation
     for(int l=0; l<input.size(); l++){
       vector<string> line = input[l];
+
       //Resistor processing
       if(line[0].find('R')==0){
         double r_con = 1/(ctod(line[3]));
@@ -284,13 +268,10 @@ int main()
           if(stoi(line[1]) > stoi(line[2])){
             //Copying values from first row into second row and overwrite first row
             for(int x=0; x<con_l.cols(); x++){
-              if(con_l(stoi(line[2])-1)!=0){
-                con_l(stoi(line[1])-1, x) = con_l(stoi(line[2])-1, x);
-                con_l(stoi(line[2])-1, x) = 0;
-                con_l(stoi(line[1])-1, stoi(line[1])-1) += abs(con_l(stoi(line[1])-1, x));
+              con_l(stoi(line[1])-1, x) += con_l(stoi(line[2])-1, x);
+              con_l(stoi(line[2])-1, x) = 0;
               }
             }
-
             //Making of supernode means 0 conductance between nodes
             con_l(stoi(line[1])-1, stoi(line[2])-1) = 0;
             //Add in 1 and -1 to first row to represent voltage source
@@ -300,7 +281,6 @@ int main()
             i_l(stoi(line[1])-1) += i_l(stoi(line[2])-1);
           }
         }
-      }
 
       //Voltage processing
       if(line[0].find('V')==0){
@@ -324,28 +304,14 @@ int main()
         //All other cases when it is connected to 2 non-reference nodes
         else{
           //Check for second time voltage source appears
-          double sc = 0;
           if(stoi(line[1]) > stoi(line[2])){
             //Copying values from first row into second row and overwrite first row
             for(int x=0; x<con_l.cols(); x++){
-              if(con_l(stoi(line[2])-1)!=0){
               con_l(stoi(line[1])-1, x) += con_l(stoi(line[2])-1, x);
               con_l(stoi(line[2])-1, x) = 0;
-              con_l(stoi(line[1])-1, stoi(line[1])-1) += abs(con_l(stoi(line[1])-1, x));
-              }
             }
-            //find total conductance connected positive end of supernode
-            for(int y=0; y<con_l.cols(); y++){
-              if(y < stoi(line[1])-1){
-                sc += con_l(stoi(line[1])-1, y);
-              }
-            }
-            //Current vector value equal to value of source multiplied by conductance at positive terminal
-            i_l(stoi(line[1])-1) = ctod(line[3])*sc;
             //Move current vector value from first row into second row if current source present
             i_l(stoi(line[1])-1) += i_l(stoi(line[2])-1);
-            //Making of supernode means 0 conductance between nodes
-            con_l(stoi(line[1])-1, stoi(line[2])-1) = 0;
             //Add in 1 and -1 to first row to represent voltage source
             con_l(stoi(line[2])-1, stoi(line[2])-1) = 1;
             con_l(stoi(line[2])-1, stoi(line[1])-1) = -1;
@@ -419,13 +385,12 @@ int main()
           double l_pd;
           //Finding l_pd, the PD across inductor
           if(l_node1 == 0){
-            l_pd = v_s((l_node2-1),0);
+            l_pd = -v_s((l_node2-1),0);
         }else if(l_node2 == 0){
-            l_pd = -(v_s((l_node1-1),0));
+            l_pd = (v_s((l_node1-1),0));
         }else{
-            l_pd = (v_s((l_node2-1),0))-(v_s((l_node1-1),0));
+            l_pd = (v_s((l_node1-1),0))-(v_s((l_node2-1),0));
         }
-        cout<<"PD across inductor = "<<l_pd<<endl;
         //Finding di, the change in current and the inductors contribution to that node's current
         double di_l = (l_pd*timeStep)/induct_val;
         if(l_node2!=0){
@@ -472,7 +437,6 @@ int main()
                 total += i;
               }
             }
-
             //output current into capacitor
             cout<<total<<",";
             //multiply current by timestep to get additional charge stored on capacitor
@@ -482,7 +446,6 @@ int main()
             }
           else{
             //Find difference in voltage nodes and multiply by capacitance to get charges
-            double sc = 0;
             for(int y=0; y<con_s.cols(); y++){
               if(y < stoi(line[1])-1){
                 double i = (y, con_s(stoi(line[2])-1))*(v_s(stoi(line[1])-1)-v_s(y));
@@ -502,13 +465,6 @@ int main()
             //Divide total charge by capacitance to update current vector value
             i_s(stoi(line[1])-1) = charges[line[0]]/ctod(line[3]);
             //find total conductance connected positive end of supernode
-            for(int y=0; y<con_s.cols(); y++){
-              if(y < stoi(line[1])-1){
-                sc -= con_s(stoi(line[1])-1, y);
-              }
-            }
-            //Current vector value equal to value of voltage multiplied by conductance at positive terminal
-            i_s(stoi(line[2])-1) = i_s(stoi(line[2])-1)*sc;
             }
           }
 
@@ -534,6 +490,7 @@ int main()
       cout<<"\n";
     }
   }
+
   if(1){
     for(double t=0.0; t<=stopTime; t+=timeStep){
       cout<<t<<",";
@@ -560,7 +517,6 @@ int main()
         }else{
             l_pd = (v_l((l_node2-1),0))-(v_l((l_node1-1),0));
         }
-        cout<<"PD across inductor = "<<l_pd<<endl;
         //Finding di, the change in current and the inductors contribution to that node's current
         double di_l = (l_pd*timeStep)/induct_val;
         if(l_node2!=0){
@@ -607,7 +563,6 @@ int main()
                 total += i;
               }
             }
-
             //output current into capacitor
             cout<<total<<",";
             //multiply current by timestep to get additional charge stored on capacitor
