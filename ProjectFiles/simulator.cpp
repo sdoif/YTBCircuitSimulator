@@ -401,11 +401,11 @@ int main()
           double l_pd;
           //Finding l_pd, the PD across inductor
           if(l_node1 == 0){
-            l_pd = v_s((l_node2-1),0);
+            l_pd = -v_s((l_node2-1),0);
         }else if(l_node2 == 0){
-            l_pd = -(v_s((l_node1-1),0));
+            l_pd = (v_s((l_node1-1),0));
         }else{
-            l_pd = (v_s((l_node2-1),0))-(v_s((l_node1-1),0));
+            l_pd = (v_s((l_node1-1),0))-(v_s((l_node2-1),0));
         }
         cout<<"PD across inductor = "<<l_pd<<endl;
         //Finding di, the change in current and the inductors contribution to that node's current
