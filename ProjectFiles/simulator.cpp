@@ -13,6 +13,7 @@ double ctod(string v);
 
 int main()
 {
+  //Maps for processing
   map<string, double> charges;
   map<string, double> induct_i;
   //Netlist management
@@ -114,10 +115,11 @@ int main()
     i_l = VectorXd::Zero(node_max);
   }
 
-  if(node_max<17){
   //Intialisation
+  if(node_max<17){
   for(int l=0; l<input.size(); l++){
     vector<string> line = input[l];
+
     //Resistor processing
     if(line[0].find('R')==0){
       double r_con = 1/(ctod(line[3]));
@@ -154,7 +156,6 @@ int main()
             con_s(stoi(line[2])-1, x) = 0;
             }
           }
-
           //Making of supernode means 0 conductance between nodes
           con_s(stoi(line[1])-1, stoi(line[2])-1) = 0;
           //Add in 1 and -1 to first row to represent voltage source
@@ -164,7 +165,6 @@ int main()
           i_s(stoi(line[1])-1) += i_s(stoi(line[2])-1);
         }
       }
-
 
     //Voltage processing
     if(line[0].find('V')==0){
@@ -232,9 +232,9 @@ int main()
   }
 
   if(node_max>16){
-    //Intialisation
     for(int l=0; l<input.size(); l++){
       vector<string> line = input[l];
+
       //Resistor processing
       if(line[0].find('R')==0){
         double r_con = 1/(ctod(line[3]));
@@ -271,7 +271,6 @@ int main()
               con_l(stoi(line[2])-1, x) = 0;
               }
             }
-
             //Making of supernode means 0 conductance between nodes
             con_l(stoi(line[1])-1, stoi(line[2])-1) = 0;
             //Add in 1 and -1 to first row to represent voltage source
@@ -281,7 +280,6 @@ int main()
             i_l(stoi(line[1])-1) += i_l(stoi(line[2])-1);
           }
         }
-
 
       //Voltage processing
       if(line[0].find('V')==0){
@@ -391,7 +389,6 @@ int main()
         }else{
             l_pd = (v_s((l_node1-1),0))-(v_s((l_node2-1),0));
         }
-        cout<<"PD across inductor = "<<l_pd<<endl;
         //Finding di, the change in current and the inductors contribution to that node's current
         double di_l = (l_pd*timeStep)/induct_val;
         if(l_node2!=0){
@@ -438,7 +435,6 @@ int main()
                 total += i;
               }
             }
-
             //output current into capacitor
             cout<<total<<",";
             //multiply current by timestep to get additional charge stored on capacitor
@@ -467,7 +463,6 @@ int main()
             //Divide total charge by capacitance to update current vector value
             i_s(stoi(line[1])-1) = charges[line[0]]/ctod(line[3]);
             //find total conductance connected positive end of supernode
-
             }
           }
 
@@ -493,6 +488,7 @@ int main()
       cout<<"\n";
     }
   }
+
   if(node_max>16){
     for(double t=0.0; t<=stopTime; t+=timeStep){
       cout<<t<<",";
@@ -519,7 +515,6 @@ int main()
         }else{
             l_pd = (v_l((l_node2-1),0))-(v_l((l_node1-1),0));
         }
-        cout<<"PD across inductor = "<<l_pd<<endl;
         //Finding di, the change in current and the inductors contribution to that node's current
         double di_l = (l_pd*timeStep)/induct_val;
         if(l_node2!=0){
@@ -566,7 +561,6 @@ int main()
                 total += i;
               }
             }
-
             //output current into capacitor
             cout<<total<<",";
             //multiply current by timestep to get additional charge stored on capacitor
