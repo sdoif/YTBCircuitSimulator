@@ -217,7 +217,7 @@ int main()
       int node = stoi(line[1]);
       //cout<<node<<endl;
       //If a current source is found, the value of its current will be added to respective node
-        !=0){
+        if(node!=0){
         //  cout<<"here if"<<endl;
           //If sinusoidal then at t=0, only DC offset value
           if(line[3]=="SINE"){
