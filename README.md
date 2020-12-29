@@ -13,4 +13,4 @@ Our software requires the instillation of the Eigen library for matrix processin
 Simply download the latest release here: http://eigen.tuxfamily.org/index.php?title=Main_Page
 To install, put the folder in /usr/local/include/
 Running simulator_compile.sh will create a binary of the program called simulator,
-you can stream the input netlist via cin and capture the output via cout.
+you can stream the input netlist via stdin and capture the output via stdout.
